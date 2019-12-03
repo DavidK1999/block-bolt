@@ -1,10 +1,17 @@
-const board = [];
 
-for(let i = 0; i < 10; i++) {
-    board.push(i);
-    // for(let j = 0; j < 10; j++) {
-    //     board.push(j);
-    // }
+
+
+const keycodes =  {
+    1: "left",
+    2: "right",
+    3: "up",
+    4: "down"
 }
 
-console.log(board);
+
+
+for(keycode in keycodes) {
+    // console.log(keycode);
+    console.log(keycodes[keycode]);
+    // console.log(keycodes)
+}
