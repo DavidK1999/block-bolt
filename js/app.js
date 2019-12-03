@@ -20,23 +20,54 @@ class Game {
 
 class Player {
     constructor() {
-        this.sprite = $('<div>').addClass('player-one');
+        this.sprite;
+        this.controls;
     }
 
     move() {
-        
+        $(event.target).css("transform","translate(52px,0)");
     }
 }
 
+class Player1 extends Player {
+    constructor(sprite, controls) {
+        super(sprite,controls);
+        this.sprite = $('<div>').addClass('player-one');
+        this.controls = ['W','A','S','D'];
+    }
 
-
-
+    input() {
+        $('body').on('keypress', (e) => {
+            console.log(e.which);
+            switch(e.which) {
+                case 97:
+                    this.sprite.css("transform","translate(-52px,0)");
+                    break;
+                case 115:
+                    this.sprite.css("transform","translate(0, 52px)");
+                    break;
+                case 100:
+                    this.sprite.css("transform","translate(52px,0)");
+                    break;
+                case 119:
+                    this.sprite.css("transform","translate(0, -52px)");
+                    break;
+                default:
+                    console.log('Ruh roh');
+            }
+            //A is keycode 97
+            // S is keycode 115
+            // D is keycode 100
+            // W is keycode 119
+        });
+    }
+}
 
 $(() => {
     const game = new Game();
-    const player = new Player();
-    console.log(player);
+    const player1 = new Player1();
     game.createBoard(100);
-    game.addPlayersToBoard(player);
-    console.log(player);
+    game.addPlayersToBoard(player1);
+    player1.input();
+    
 });
