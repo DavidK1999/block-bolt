@@ -38,19 +38,20 @@ class Player1 extends Player {
 
     input() {
         $('body').on('keypress', (e) => {
-            console.log(e.which);
+            console.log(e.which)
             switch(e.which) {
                 case 97:
-                    this.sprite.css("transform","translate(-52px,0)");
+                    this.moveLeft();
                     break;
                 case 115:
-                    this.sprite.css("transform","translate(0, 52px)");
+                    console.log(e.which);
+                    this.moveDown();
                     break;
                 case 100:
-                    this.sprite.css("transform","translate(52px,0)");
+                    this.moveRight();
                     break;
                 case 119:
-                    this.sprite.css("transform","translate(0, -52px)");
+                    this.moveRight();
                     break;
                 default:
                     console.log('Ruh roh');
@@ -60,6 +61,22 @@ class Player1 extends Player {
             // D is keycode 100
             // W is keycode 119
         });
+    }
+
+    moveDown() {
+        this.sprite.animate({bottom: '-=52',});
+    }
+
+    moveUp() {
+        this.sprite.animate({top: '+=52'});
+    }
+
+    moveRight() {
+        this.sprite.animate({right: '-=52'});
+    }
+
+    moveLeft() {
+        this.sprite.animate({left: '-=52'});
     }
 }
 
