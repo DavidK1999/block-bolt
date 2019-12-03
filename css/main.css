@@ -1,0 +1,36 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    height: 100vh;
+}
+
+.game-board {
+    display: flex;
+    height: 520px;
+    width: 520px;
+    flex-wrap: wrap;
+
+}
+
+
+.block {
+    background-color: red;
+    width: 50px;
+    height: 50px;
+    border: 1px solid black;
+}
+
+.player-one {
+    background-color: orange;
+    width: 50px;
+    height: 50px;
+    z-index: -1;
+}
+
+.player-two {
+    background-color: lime;
+    width: 50pxl
+    height: 50px;
+}
