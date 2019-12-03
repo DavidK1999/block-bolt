@@ -4,6 +4,8 @@ body {
     align-items: center;
 
     height: 100vh;
+    position: relative;
+
 }
 
 .game-board {
@@ -11,7 +13,6 @@ body {
     height: 520px;
     width: 520px;
     flex-wrap: wrap;
-    position: relative;
 
 }
 
