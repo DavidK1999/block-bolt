@@ -37,13 +37,13 @@ class Game {
         window.setInterval(() => {
             console.log('Hi');
            this.getElsAt(this.player1.sprite.offset().top, this.player1.sprite.offset().left);
-        }, 100);
+        });
     }
     
     getPlayer2CurrentPosition() {
         window.setInterval(() => {
             this.getElsAt(this.player2.sprite.offset().top, this.player2.sprite.offset().left);
-        }, 100);
+        });
     }
 
     // https://stackoverflow.com/questions/3942776/using-jquery-to-find-an-element-at-a-particular-position Is where I found this function
@@ -58,9 +58,11 @@ class Game {
 
     removeBlock() {
         for(const $block of $blockToBeRemoved) {
-            $block.animate({backgroundColor: 'black'}, 700);
-            // $block.removeClass('block');
-            // $block.addClass('hole');
+            // $block.animate({backgroundColor: 'black', filter: 'blur(5px'}, 700);
+            window.setTimeout(() => {
+                $block.removeClass('block');
+                $block.addClass('hole');
+            }, 100);
         }
     }
 }
