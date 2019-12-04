@@ -1,0 +1,52 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.game-board {
+    display: flex;
+    flex-wrap: wrap;
+    width: 400px;
+    height: auto;
+}
+
+.active-space {
+    width: 20px;
+    height: 20px;
+    background-color: #646464;
+
+
+}
+
+.dead-space {
+    width: 20px;
+    height: 20px;
+    display: hidden;
+}
+
+.player {
+    text-align: center;
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    font-weight: bold;
+}
+
+.player-one {
+    background-color: orange;
+}
+
+.player-two {
+    background-color: aqua;
+}
+
+.start {
+    width: 20px;
+    height: 20px;
+    background-color: white;
+}
+

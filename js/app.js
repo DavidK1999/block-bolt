@@ -66,27 +66,26 @@ class Game {
 
     player1Trail($currentBlock) {
         $currentBlock.append(this.player1.sprite);
-        if($('.player').parent().hasClass('hole')) {
+        if($('.player-one').parent().hasClass('hole')) {
             $(".player-one").remove();
         };
-        $currentBlock.animate({backgroundColor: 'black'}, 1750);
+        $currentBlock.animate({backgroundColor: 'black'}, 1000);
         setTimeout(() => {
             $currentBlock.addClass('hole');
 
-        }, 1750);
+        }, 800);
     }
     
     
     player2Trail($currentBlock) {
         $currentBlock.append(this.player2.sprite);
-        if($('.player').parent().hasClass('hole')) {
+        if($('.player-two').parent().hasClass('hole')) {
             $(".player-two").remove();
         };
-        $currentBlock.animate({backgroundColor: 'black'}, 1750);
+        $currentBlock.animate({backgroundColor: 'black'}, 1000);
         setTimeout(() => {
             $currentBlock.addClass('hole');
-
-        }, 1750);
+        }, 800);
     }
 }
 
@@ -114,6 +113,10 @@ class Player {
     moveLeft() {
         this.sprite.animate({left: '-=50'}, 100);
         console.log('Right');
+    }
+
+    jump() {
+        this.sprite.animate({left: '+=100'}, 100)
     }
 }
 
@@ -143,6 +146,9 @@ class Player1 extends Player {
                     break;
                 case 119:
                    this.moveUp();
+                    break;
+                case 16:
+                    this.jump();
                     break;
             }
         });
@@ -189,7 +195,7 @@ $(() => {
     const player1 = new Player1();
     const player2 = new Player2();
     const game = new Game(player1, player2);
-    game.createBoard(300);
+    game.createBoard(350);
     game.getBlockPositions();
     game.addPlayersToBoard();
     player1.getInput();
