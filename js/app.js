@@ -1,5 +1,9 @@
 const $gameBoard = $('.game-board');
 const $blockOffset = [];
+const $blockToBeRemoved = [];
+
+// let selectedElement = document.getElementFromPoint(100, 100);
+// console.log(selectedElement);
 
 class Game {
     constructor(player1, player2) {
@@ -17,21 +21,47 @@ class Game {
 
     getBlockPositions() {
         let $blocks = $gameBoard.children('.block');
-        let $blockOffset = [];
         for(let i = 0; i < $blocks.length; i++) {
             $blockOffset.push($blocks.eq(i).offset());
         }
     }
 
+
+
     addPlayersToBoard() {
         $('#0').append(this.player1.sprite);
-        $('#99').append(this.player2.sprite);
-
+        $('#299').append(this.player2.sprite);
     }
 
-    getPlayerPreviousPosition() {
-        this.player1.getInput();
-        this.player2.getInput();
+    getPlayer1CurrentPosition() {
+        window.setInterval(() => {
+            console.log('Hi');
+           this.getElsAt(this.player1.sprite.offset().top, this.player1.sprite.offset().left);
+        }, 100);
+    }
+    
+    getPlayer2CurrentPosition() {
+        window.setInterval(() => {
+            this.getElsAt(this.player2.sprite.offset().top, this.player2.sprite.offset().left);
+        }, 100);
+    }
+
+    // https://stackoverflow.com/questions/3942776/using-jquery-to-find-an-element-at-a-particular-position Is where I found this function
+    getElsAt(top, left) {
+        $blockToBeRemoved.push($gameBoard
+            .find(".block")
+            .filter(function() {
+                return $(this).offset().top == top
+                    && $(this).offset().left == left;
+            }, this.removeBlock()));
+    }
+
+    removeBlock() {
+        for(const $block of $blockToBeRemoved) {
+            $block.animate({backgroundColor: 'black'}, 700);
+            // $block.removeClass('block');
+            // $block.addClass('hole');
+        }
     }
 }
 
@@ -134,9 +164,12 @@ $(() => {
     const player1 = new Player1();
     const player2 = new Player2();
     const game = new Game(player1, player2);
-    game.createBoard(100);
+    game.createBoard(300);
     game.getBlockPositions();
     game.addPlayersToBoard();
-    game.getPlayerPreviousPosition();
+    player1.getInput();
+    player2.getInput()
+    game.getPlayer1CurrentPosition();
+    game.getPlayer2CurrentPosition();
 });
 
