@@ -1,7 +1,10 @@
 const $gameBoard = $('.game-board');
+const $blockOffset = [];
 
 class Game {
-    constructor() {
+    constructor(player1, player2) {
+        this.player1 = player1;
+        this.player2 = player2;
 
     }
 
@@ -12,49 +15,62 @@ class Game {
         }
     }
 
-    addPlayersToBoard(player) {
-        $('#1').append(player.sprite);
+    getBlockPositions() {
+        let $blocks = $gameBoard.children('.block');
+        let $blockOffset = [];
+        for(let i = 0; i < $blocks.length; i++) {
+            $blockOffset.push($blocks.eq(i).offset());
+        }
+    }
 
+    addPlayersToBoard() {
+        $('#0').append(this.player1.sprite);
+        $('#99').append(this.player2.sprite);
+
+    }
+
+    getPlayerPreviousPosition() {
+        this.player1.getInput();
+        this.player2.getInput();
     }
 }
 
 class Player {
-    constructor(sprite, controls, keycodes) {
+    constructor(sprite) {
         this.sprite = sprite;
     }
 
     moveDown() {
-        this.sprite.animate({top: '+=52'}, 100);
+        this.sprite.animate({top: '+=50'}, 100);
         console.log('Down');    
     }
 
     moveUp() {
-        this.sprite.animate({top: '-=52'}, 100);
+        this.sprite.animate({top: '-=50'}, 100);
         console.log('Down');
     }
 
     moveRight() {
-        this.sprite.animate({left: '+=52'}, 100);
+        this.sprite.animate({left: '+=50'}, 100);
         console.log('Right');   
 
     }
 
     moveLeft() {
-        this.sprite.animate({left: '-=52'}, 100);
+        this.sprite.animate({left: '-=50'}, 100);
         console.log('Right');
     }
-
-
 }
 
 class Player1 extends Player {
     constructor(sprite) {
         super(sprite);
-        this.sprite = $('<div>').addClass('player-one');
+        this.sprite = $('<div>').addClass('player').addClass('player-one');
     }
 
     getInput() {
         $('body').on('keypress', (e) => {
+            console.log(this.sprite.offset());
             console.log(e.which)
             //A is keycode 97
             // S is keycode 115
@@ -73,8 +89,6 @@ class Player1 extends Player {
                 case 119:
                    this.moveUp();
                     break;
-                default:
-                    console.log('Ruh roh');
             }
         });
     }
@@ -83,11 +97,11 @@ class Player1 extends Player {
 class Player2 extends Player {
     constructor(sprite) {
         super(sprite);
-        this.sprite = $('<div>').addClass('player-two');
+        this.sprite = $('<div>').addClass('player').addClass('player-two');
     }
 
     getInput() {
-        $('body').on('keydown', (e) => {
+        const move = $('body').on('keydown', (e) => {
             console.log(e.which)
             //<- is keycode 37
             // ^ is keycode 38
@@ -106,23 +120,23 @@ class Player2 extends Player {
                 case 38:
                    this.moveUp();
                     break;
-                default:
-                    console.log('Ruh roh');
             }
+            let $previousPosition = this.sprite.position();
+            return $previousPosition;
         });
+        return move;
     }
 }
 
 
 
 $(() => {
-    const game = new Game();
     const player1 = new Player1();
     const player2 = new Player2();
+    const game = new Game(player1, player2);
     game.createBoard(100);
-    game.addPlayersToBoard(player1);
-    game.addPlayersToBoard(player2);
-    player1.getInput();
-    player2.getInput();
+    game.getBlockPositions();
+    game.addPlayersToBoard();
+    game.getPlayerPreviousPosition();
 });
 
