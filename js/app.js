@@ -65,16 +65,28 @@ class Game {
     }
 
     player1Trail($currentBlock) {
-        $currentBlock.removeClass('block');
-        $currentBlock.addClass('hole');
         $currentBlock.append(this.player1.sprite);
+        if($('.player').parent().hasClass('hole')) {
+            $(".player-one").remove();
+        };
+        $currentBlock.animate({backgroundColor: 'black'}, 1750);
+        setTimeout(() => {
+            $currentBlock.addClass('hole');
+
+        }, 1750);
     }
     
     
     player2Trail($currentBlock) {
-        $currentBlock.removeClass('block');
-        $currentBlock.addClass('hole');
         $currentBlock.append(this.player2.sprite);
+        if($('.player').parent().hasClass('hole')) {
+            $(".player-two").remove();
+        };
+        $currentBlock.animate({backgroundColor: 'black'}, 1750);
+        setTimeout(() => {
+            $currentBlock.addClass('hole');
+
+        }, 1750);
     }
 }
 
