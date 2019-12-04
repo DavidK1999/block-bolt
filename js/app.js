@@ -1,7 +1,5 @@
 const $gameBoard = $('.game-board');
 const $blockOffset = [];
-const $player1Blocks = [];
-const $player2Blocks = [];
 
 // let selectedElement = document.getElementFromPoint(100, 100);
 // console.log(selectedElement);
@@ -46,39 +44,37 @@ class Game {
 
     // https://stackoverflow.com/questions/3942776/using-jquery-to-find-an-element-at-a-particular-position Is where I found this function
     checkPlayer1Position(top, left) {
-        $player1Blocks.push($gameBoard
+        // const $player1Blocks = [];
+        let $player1Block = $gameBoard
             .find(".block")
             .filter(function() {
                 return $(this).offset().top === top
                     && $(this).offset().left === left;
-            }, this.player1Trail()));
+            });
+            this.player1Trail($player1Block);
     }
     
     checkPlayer2Position(top, left) {
-        $player2Blocks.push($gameBoard
+        let $player2Block = $gameBoard
             .find(".block")
             .filter(function() {
                 return $(this).offset().top === top
                     && $(this).offset().left === left;
-            }, this.player2Trail()));
+            });
+            this.player2Trail($player2Block);
     }
 
-    player1Trail() {
-        for(const $player1Block of $player1Blocks) {
-            window.setTimeout(() => {
-                $player1Block.removeClass('block');
-                $player1Block.addClass('hole');
-            }, 100);
-        }
+    player1Trail($currentBlock) {
+        $currentBlock.removeClass('block');
+        $currentBlock.addClass('hole');
+        $currentBlock.append(this.player1.sprite);
     }
     
-    player2Trail() {
-        for(const $player2Block of $player2Blocks) {
-            window.setTimeout(() => {
-                $player2Block.removeClass('block');
-                $player2Block.addClass('hole');
-            }, 100);
-        }
+    
+    player2Trail($currentBlock) {
+        $currentBlock.removeClass('block');
+        $currentBlock.addClass('hole');
+        $currentBlock.append(this.player2.sprite);
     }
 }
 
