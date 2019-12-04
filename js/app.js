@@ -1,6 +1,7 @@
 const $gameBoard = $('.game-board');
 const $blockOffset = [];
-const $blockToBeRemoved = [];
+const $player1Blocks = [];
+const $player2Blocks = [];
 
 // let selectedElement = document.getElementFromPoint(100, 100);
 // console.log(selectedElement);
@@ -26,8 +27,6 @@ class Game {
         }
     }
 
-
-
     addPlayersToBoard() {
         $('#0').append(this.player1.sprite);
         $('#299').append(this.player2.sprite);
@@ -35,33 +34,49 @@ class Game {
 
     getPlayer1CurrentPosition() {
         window.setInterval(() => {
-            console.log('Hi');
-           this.getElsAt(this.player1.sprite.offset().top, this.player1.sprite.offset().left);
+           this.checkPlayer1Position(this.player1.sprite.offset().top, this.player1.sprite.offset().left);
         });
     }
     
     getPlayer2CurrentPosition() {
         window.setInterval(() => {
-            this.getElsAt(this.player2.sprite.offset().top, this.player2.sprite.offset().left);
+            this.checkPlayer2Position(this.player2.sprite.offset().top, this.player2.sprite.offset().left);
         });
     }
 
     // https://stackoverflow.com/questions/3942776/using-jquery-to-find-an-element-at-a-particular-position Is where I found this function
-    getElsAt(top, left) {
-        $blockToBeRemoved.push($gameBoard
+    checkPlayer1Position(top, left) {
+        $player1Blocks.push($gameBoard
             .find(".block")
             .filter(function() {
-                return $(this).offset().top == top
-                    && $(this).offset().left == left;
-            }, this.removeBlock()));
+                return $(this).offset().top === top
+                    && $(this).offset().left === left;
+            }, this.player1Trail()));
+    }
+    
+    checkPlayer2Position(top, left) {
+        $player2Blocks.push($gameBoard
+            .find(".block")
+            .filter(function() {
+                return $(this).offset().top === top
+                    && $(this).offset().left === left;
+            }, this.player2Trail()));
     }
 
-    removeBlock() {
-        for(const $block of $blockToBeRemoved) {
-            // $block.animate({backgroundColor: 'black', filter: 'blur(5px'}, 700);
+    player1Trail() {
+        for(const $player1Block of $player1Blocks) {
             window.setTimeout(() => {
-                $block.removeClass('block');
-                $block.addClass('hole');
+                $player1Block.removeClass('block');
+                $player1Block.addClass('hole');
+            }, 100);
+        }
+    }
+    
+    player2Trail() {
+        for(const $player2Block of $player2Blocks) {
+            window.setTimeout(() => {
+                $player2Block.removeClass('block');
+                $player2Block.addClass('hole');
             }, 100);
         }
     }
