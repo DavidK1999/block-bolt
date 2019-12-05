@@ -36,6 +36,13 @@ h1 {
     right: 10%;
 }
 
+.blue {
+    transition: 2s ease-out;
+    background-color: blue;
+    width: 20px;
+    height: 20px;
+}
+
 .game-board {
     display: flex;
     flex-wrap: wrap;

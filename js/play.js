@@ -1,6 +1,7 @@
 const $gameBoard = $('<div>').addClass('game-board');
 const $gameBoardEdge = $('<div>').addClass('game-board-edges');
 const $spaceOffset = [];
+let $player1History = [];
 const leftBound = 394;
 const topBound = 255;
 const rightBound = 772;
@@ -44,7 +45,7 @@ class Game {
 
     getPlayerPositions() {
         if(this.gameActive === true) {
-            window.setInterval(() => {
+            $('body').on('keyup', (e) => {
                 this.generatePlayer1Trail(this.player1.getCurrentPosition().top, this.player1.getCurrentPosition().left);
                 this.generatePlayer2Trail(this.player2.getCurrentPosition().top, this.player2.getCurrentPosition().left);
             });
@@ -52,12 +53,19 @@ class Game {
     }
 
     generatePlayer1Trail(top, left) {
+        console.log(top);
+        console.log(left);
         let $player1CurrentSpace = $gameBoard
             .find(".active-space")
             .filter(function() {
                 return $(this).offset().top === top
                     && $(this).offset().left === left;
             });
+            let restore = $player1CurrentSpace.get(0);
+            console.log(restore);
+            console.log($player1CurrentSpace);
+            // $player1History.push($player1CurrentSpace.get(0));
+            // console.log($player1History);
         $player1CurrentSpace.append(this.player1.playerSprite);
         if($('.player-one').parent().hasClass('dead-space')) {
             $(".player-one").remove();
@@ -70,16 +78,29 @@ class Game {
         $player1CurrentSpace.animate({backgroundColor: 'black'}, 1000);
         setTimeout(() => {
             $player1CurrentSpace.addClass('dead-space');
-        }, 400)
+        }, 800);
+
+        $(restore).animate({backgroundColor: '#646464'}, 1100);
+        setTimeout(() => {
+            $(restore).remove('dead-space');
+            $(restore).addClass('active-space');
+        }, 800);
     }
     
     generatePlayer2Trail(top, left) {
+        console.log(top);
+        console.log(left);
         let $player2CurrentSpace = $gameBoard
             .find(".active-space")
             .filter(function() {
                 return $(this).offset().top === top
                     && $(this).offset().left === left;
             });
+            let restore = $player2CurrentSpace.get(0);
+            console.log(restore);
+            console.log($player2CurrentSpace);
+            // $player1History.push($player1CurrentSpace.get(0));
+            // console.log($player1History);
         $player2CurrentSpace.append(this.player2.playerSprite);
         if($('.player-two').parent().hasClass('dead-space')) {
             $(".player-two").remove();
@@ -89,11 +110,16 @@ class Game {
             }, 500);
             this.reset();
         };
-        
         $player2CurrentSpace.animate({backgroundColor: 'black'}, 1000);
         setTimeout(() => {
             $player2CurrentSpace.addClass('dead-space');
-        }, 400)
+        }, 800);
+
+        $(restore).animate({backgroundColor: '#646464'}, 1100);
+        setTimeout(() => {
+            $(restore).remove('dead-space');
+            $(restore).addClass('active-space');
+        }, 800);
     }
 
     playerScore() {
