@@ -1,5 +1,5 @@
 const $gameBoard = $('<div>').addClass('game-board');
-const $blockOffset = [];
+const $spaceOffset = [];
 
 
 class Game {
@@ -21,7 +21,7 @@ class Game {
     getSpacePositions() {
         let $blocks = $gameBoard.children('.active-space');
         for(let i = 0; i < $blocks.length; i++) {
-            $blockOffset.push($blocks.eq(i).offset());
+            $spaceOffset.push($blocks.eq(i).offset());
         }
     }
 
