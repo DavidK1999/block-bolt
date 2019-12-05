@@ -1,5 +1,9 @@
 const $gameBoard = $('<div>').addClass('game-board');
 const $spaceOffset = [];
+const leftBound = 394;
+const topBound = 255;
+const rightBound = 772;
+const bottomBound = 632;
 
 
 class Game {
@@ -10,7 +14,7 @@ class Game {
 
     createBoard(numberOfSpaces) {
         for(let i = 0; i < numberOfSpaces; i++) {
-            let $activeSpace = $('<div>').addClass('active-space');
+            let $activeSpace = $('<div>').addClass('active-space').attr('id', i);
             $gameBoard.append($activeSpace);
         }
         $('body').append($gameBoard);
@@ -34,6 +38,7 @@ class Game {
         this.player1.move();
         this.player2.move();
     }
+    
 
     getPlayerPositions() {
         window.setInterval(() => {
@@ -87,25 +92,34 @@ class Player {
     }
 
     move() {
-        $('body').on('keyup', (e) => {
+            $('body').on('keyup', (e) => {
             console.log(e.which);
-            switch(e.which) {
-                case this.leftKeyCode:
-                    this.playerSprite.animate({left: '-=20'}, 100);
-                    break;
-                case this.upKeyCode:
-                    this.playerSprite.animate({top: '-=20'}, 100);
-                    break;
-                case this.rightKeyCode:
-                    this.playerSprite.animate({left: '+=20'}, 100);
-                    break;
-                case this.downKeyCode:
-                    this.playerSprite.animate({top: '+=20'}, 100);
-                    break;
-            }
-        });
-    }
+                switch(e.which) {
+                    case this.leftKeyCode:
+                        if(this.getCurrentPosition().left >= leftBound) {
+                            this.playerSprite.animate({left: '-=20'}, 100);
+                        } 
+                        break;
+                    case this.upKeyCode:
+                        if(this.getCurrentPosition().top >= topBound) {
+                            this.playerSprite.animate({top: '-=20'}, 100);
+                        } 
+                        break;
+                    case this.rightKeyCode:
+                        if(this.getCurrentPosition().left <= rightBound) {
+                        this.playerSprite.animate({left: '+=20'}, 100);
+                        }
+                        break;
+                    case this.downKeyCode:
+                        if(this.getCurrentPosition().top <= bottomBound) {
+                            this.playerSprite.animate({top: '+=20'}, 100);
+                        }
+                        break;
+                }
+            });
+    };
 
+    
     getCurrentPosition() {
         return this.playerSprite.offset();
     }
@@ -119,4 +133,4 @@ game.getSpacePositions();
 game.addPlayersToBoard();
 game.allowMovement();
 game.getPlayerPositions();
-console.log($('.start'));
+console.log($spaceOffset);
