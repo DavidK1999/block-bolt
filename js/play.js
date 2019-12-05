@@ -1,15 +1,16 @@
 const $gameBoard = $('<div>').addClass('game-board');
+const $gameBoardEdge = $('<div>').addClass('game-board-edges');
 const $spaceOffset = [];
 const leftBound = 394;
 const topBound = 255;
 const rightBound = 772;
 const bottomBound = 632;
 
-
 class Game {
     constructor(player1, player2) {
         this.player1 = player1;
         this.player2 = player2;
+        this.gameActive = false;
     }
 
     createBoard(numberOfSpaces) {
@@ -17,7 +18,8 @@ class Game {
             let $activeSpace = $('<div>').addClass('active-space').attr('id', i);
             $gameBoard.append($activeSpace);
         }
-        $('body').append($gameBoard);
+        $('body').append($gameBoardEdge);
+        $gameBoardEdge.append($gameBoard);
         $gameBoard.children('.active-space').eq(0).attr('class', 'start');
         $gameBoard.children('.active-space').eq(numberOfSpaces - 2).attr('class', 'start');
     }
@@ -41,10 +43,12 @@ class Game {
     
 
     getPlayerPositions() {
-        window.setInterval(() => {
-            this.generatePlayer1Trail(this.player1.getCurrentPosition().top, this.player1.getCurrentPosition().left);
-            this.generatePlayer2Trail(this.player2.getCurrentPosition().top, this.player2.getCurrentPosition().left);
-        });
+        if(this.gameActive === true) {
+            window.setInterval(() => {
+                this.generatePlayer1Trail(this.player1.getCurrentPosition().top, this.player1.getCurrentPosition().left);
+                this.generatePlayer2Trail(this.player2.getCurrentPosition().top, this.player2.getCurrentPosition().left);
+            });
+        }
     }
 
     generatePlayer1Trail(top, left) {
@@ -57,11 +61,16 @@ class Game {
         $player1CurrentSpace.append(this.player1.playerSprite);
         if($('.player-one').parent().hasClass('dead-space')) {
             $(".player-one").remove();
+            this.player2.score += 1;
+            window.setTimeout(() => {
+                window.alert('Player 2 wins');
+            }, 500);
+            this.reset();
         };
         $player1CurrentSpace.animate({backgroundColor: 'black'}, 1000);
         setTimeout(() => {
             $player1CurrentSpace.addClass('dead-space');
-        }, 800)
+        }, 400)
     }
     
     generatePlayer2Trail(top, left) {
@@ -74,12 +83,45 @@ class Game {
         $player2CurrentSpace.append(this.player2.playerSprite);
         if($('.player-two').parent().hasClass('dead-space')) {
             $(".player-two").remove();
+            this.player1.score += 1;
+            window.setTimeout(() => {
+                window.alert('Player 1 wins');
+            }, 500);
+            this.reset();
         };
+        
         $player2CurrentSpace.animate({backgroundColor: 'black'}, 1000);
         setTimeout(() => {
             $player2CurrentSpace.addClass('dead-space');
-        }, 800)
+        }, 400)
     }
+
+    playerScore() {
+        window.setInterval(() => {
+            $('.player-one-score').text(`Player 1: ${this.player1.score}`);
+            $('.player-two-score').text(`Player 2: ${this.player2.score}`);
+        });
+    
+    }
+
+    reset() {
+        window.setTimeout(() => {
+            $gameBoardEdge.remove();
+            $gameBoard.remove();
+            location.reload();
+
+        }, 500);
+    }
+
+    start() {
+        this.gameActive = true;
+        game.createBoard(400);
+        game.addPlayersToBoard();
+        game.getSpacePositions();
+        game.allowMovement();
+        game.getPlayerPositions();
+        game.playerScore();
+    };
 }
 
 class Player {
@@ -89,11 +131,12 @@ class Player {
         this.upKeyCode = keycodes[1]
         this.rightKeyCode = keycodes[2];
         this.downKeyCode = keycodes[3];
+        this.score = 0;
     }
 
     move() {
             $('body').on('keyup', (e) => {
-            console.log(e.which);
+                console.log(e.which);
                 switch(e.which) {
                     case this.leftKeyCode:
                         if(this.getCurrentPosition().left >= leftBound) {
@@ -117,9 +160,8 @@ class Player {
                         break;
                 }
             });
-    };
+        }
 
-    
     getCurrentPosition() {
         return this.playerSprite.offset();
     }
@@ -128,9 +170,4 @@ class Player {
 const player1 = new Player('player-one', [65, 87, 68, 83], 1);
 const player2 = new Player('player-two', [37, 38, 39, 40], 2);
 const game = new Game(player1, player2);
-game.createBoard(400);
-game.getSpacePositions();
-game.addPlayersToBoard();
-game.allowMovement();
-game.getPlayerPositions();
-console.log($spaceOffset);
+game.start();

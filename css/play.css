@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Bebas+Neue|Notable&display=swap');
+
 body {
     display: flex;
     justify-content: center;
@@ -5,6 +7,33 @@ body {
     position: relative;
     height: 100vh;
     overflow: hidden;
+    font-family: 'Bebas Neue', cursive;}
+
+h1 {
+    position: absolute;
+    top: 5%;
+}
+
+.controls {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 80%;
+    width: 20%;
+    position: absolute;
+    left: 10%;
+}
+
+.score {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 80%;
+    width: 20%;
+    position: absolute;
+    right: 10%;
 }
 
 .game-board {
@@ -14,12 +43,19 @@ body {
     height: auto;
 }
 
+.game-board-edges {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 450px;
+    height: 450px;
+    background-color: violet;
+}
+
 .active-space {
     width: 20px;
     height: 20px;
     background-color: #646464;
-
-
 }
 
 .dead-space {
@@ -47,6 +83,7 @@ body {
 .start {
     width: 20px;
     height: 20px;
-    background-color: white;
+    background-color: darkkhaki;
+    text-align: center;
 }
 
