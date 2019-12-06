@@ -2,9 +2,9 @@ const $gameBoard = $('<div>').addClass('game-board');
 const $gameBoardEdge = $('<div>').addClass('game-board-edges');
 const $spaceOffset = [];
 let $player1History = [];
-const leftBound = 394;
+const leftBound = 393.66668701171875;
 const topBound = 255;
-const rightBound = 772;
+const rightBound = 753.6666870117188;
 const bottomBound = 632;
 
 class Game {
@@ -46,6 +46,8 @@ class Game {
     getPlayerPositions() {
         if(this.gameActive === true) {
             $('body').on('keyup', (e) => {
+                console.log(this.player1.getCurrentPosition());
+                console.log(this.player2.getCurrentPosition());
                 this.generatePlayer1Trail(this.player1.getCurrentPosition().top, this.player1.getCurrentPosition().left);
                 this.generatePlayer2Trail(this.player2.getCurrentPosition().top, this.player2.getCurrentPosition().left);
             });
@@ -62,29 +64,30 @@ class Game {
                     && $(this).offset().left === left;
             });
             let restore = $player1CurrentSpace.get(0);
-            console.log(restore);
-            console.log($player1CurrentSpace);
-            // $player1History.push($player1CurrentSpace.get(0));
-            // console.log($player1History);
-        $player1CurrentSpace.append(this.player1.playerSprite);
-        if($('.player-one').parent().hasClass('dead-space')) {
-            $(".player-one").remove();
-            this.player2.score += 1;
-            window.setTimeout(() => {
-                window.alert('Player 2 wins');
-            }, 500);
-            this.reset();
-        };
-        $player1CurrentSpace.animate({backgroundColor: 'black'}, 1000);
+            
+        $(restore).append(this.player1.playerSprite);
+        
+        $(restore).animate({backgroundColor: 'black'}, 1000);
         setTimeout(() => {
-            $player1CurrentSpace.addClass('dead-space');
-        }, 800);
-
-        $(restore).animate({backgroundColor: '#646464'}, 1100);
+            $(restore).attr('class','dead-space');
+            if($('.player-one').parent().hasClass('dead-space')) {
+                $(".player-one").remove();
+            }
+        }, 1001);
+        
+        $(restore).animate({backgroundColor: '#646464'}, 1000);
         setTimeout(() => {
-            $(restore).remove('dead-space');
-            $(restore).addClass('active-space');
-        }, 800);
+            $(restore).attr('class', 'active-space');
+        }, 10001);
+        
+        // if($('.player-one').parent().hasClass('dead-space')) {
+        //     $(".player-one").remove();
+        //     this.player2.score += 1;
+        //     window.setTimeout(() => {
+        //         window.alert('Player 2 wins');
+        //     }, 500);
+        //     this.reset();
+        // };
     }
     
     generatePlayer2Trail(top, left) {
@@ -96,30 +99,23 @@ class Game {
                 return $(this).offset().top === top
                     && $(this).offset().left === left;
             });
-            let restore = $player2CurrentSpace.get(0);
-            console.log(restore);
-            console.log($player2CurrentSpace);
-            // $player1History.push($player1CurrentSpace.get(0));
-            // console.log($player1History);
-        $player2CurrentSpace.append(this.player2.playerSprite);
-        if($('.player-two').parent().hasClass('dead-space')) {
-            $(".player-two").remove();
-            this.player1.score += 1;
-            window.setTimeout(() => {
-                window.alert('Player 1 wins');
-            }, 500);
-            this.reset();
-        };
-        $player2CurrentSpace.animate({backgroundColor: 'black'}, 1000);
-        setTimeout(() => {
-            $player2CurrentSpace.addClass('dead-space');
-        }, 800);
+        
+        let restore = $player2CurrentSpace.get(0);
 
-        $(restore).animate({backgroundColor: '#646464'}, 1100);
+        $(restore).append(this.player2.playerSprite);
+        
+        $(restore).animate({backgroundColor: 'black'}, 450);
         setTimeout(() => {
-            $(restore).remove('dead-space');
-            $(restore).addClass('active-space');
-        }, 800);
+            $(restore).attr('class','dead-space');
+            if($('.player-two').parent().hasClass('dead-space')) {
+                $(".player-two").remove();
+            }
+        }, 450);
+        
+        $(restore).animate({backgroundColor: '#646464'}, 450);
+        setTimeout(() => {
+            $(restore).attr('class', 'active-space');
+        }, 451);
     }
 
     playerScore() {
@@ -165,7 +161,7 @@ class Player {
                 console.log(e.which);
                 switch(e.which) {
                     case this.leftKeyCode:
-                        if(this.getCurrentPosition().left >= leftBound) {
+                        if(this.getCurrentPosition().left !== leftBound) {
                             this.playerSprite.animate({left: '-=20'}, 100);
                         } 
                         break;
