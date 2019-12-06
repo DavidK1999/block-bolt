@@ -2,10 +2,10 @@ const $gameBoard = $('<div>').addClass('game-board');
 const $gameBoardEdge = $('<div>').addClass('game-board-edges');
 const $spaceOffset = [];
 let $player1History = [];
-const leftBound = 393.66668701171875;
-const topBound = 255;
-const rightBound = 753.6666870117188;
-const bottomBound = 632;
+const leftBound = 20;
+const topBound = 20;
+const rightBound = 360;
+const bottomBound = 360;
 
 class Game {
     constructor(player1, player2) {
@@ -41,13 +41,14 @@ class Game {
         this.player1.move();
         this.player2.move();
     }
-    
 
     getPlayerPositions() {
         if(this.gameActive === true) {
             $('body').on('keyup', (e) => {
-                console.log(this.player1.getCurrentPosition());
-                console.log(this.player2.getCurrentPosition());
+                // console.log(this.player1.getCurrentPosition());
+                // console.log(this.player2.getCurrentPosition());
+                // console.log(this.player1.playerSprite.position());
+                // console.log(this.player2.playerSprite.position());
                 this.generatePlayer1Trail(this.player1.getCurrentPosition().top, this.player1.getCurrentPosition().left);
                 this.generatePlayer2Trail(this.player2.getCurrentPosition().top, this.player2.getCurrentPosition().left);
             });
@@ -55,13 +56,11 @@ class Game {
     }
 
     generatePlayer1Trail(top, left) {
-        console.log(top);
-        console.log(left);
         let $player1CurrentSpace = $gameBoard
             .find(".active-space")
             .filter(function() {
-                return $(this).offset().top === top
-                    && $(this).offset().left === left;
+                return $(this).position().top === top
+                    && $(this).position().left === left;
             });
             let restore = $player1CurrentSpace.get(0);
             
@@ -91,13 +90,11 @@ class Game {
     }
     
     generatePlayer2Trail(top, left) {
-        console.log(top);
-        console.log(left);
         let $player2CurrentSpace = $gameBoard
             .find(".active-space")
             .filter(function() {
-                return $(this).offset().top === top
-                    && $(this).offset().left === left;
+                return $(this).position().top === top
+                    && $(this).position().left === left;
             });
         
         let restore = $player2CurrentSpace.get(0);
@@ -142,7 +139,7 @@ class Game {
         game.getSpacePositions();
         game.allowMovement();
         game.getPlayerPositions();
-        game.playerScore();
+        // game.playerScore();
     };
 }
 
@@ -161,7 +158,7 @@ class Player {
                 console.log(e.which);
                 switch(e.which) {
                     case this.leftKeyCode:
-                        if(this.getCurrentPosition().left !== leftBound) {
+                        if(this.getCurrentPosition().left >= leftBound) {
                             this.playerSprite.animate({left: '-=20'}, 100);
                         } 
                         break;
@@ -185,7 +182,7 @@ class Player {
         }
 
     getCurrentPosition() {
-        return this.playerSprite.offset();
+        return this.playerSprite.position();
     }
 }
 

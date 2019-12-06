@@ -40,7 +40,6 @@ h1 {
     transition: 2s ease-out;
     background-color: blue;
     width: 20px;
-    height: 20px;
 }
 
 .game-board {
@@ -48,6 +47,7 @@ h1 {
     flex-wrap: wrap;
     width: 400px;
     height: auto;
+    position: sticky;
 }
 
 .game-board-edges {
