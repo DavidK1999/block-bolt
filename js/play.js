@@ -6,6 +6,15 @@ const leftBound = 20;
 const topBound = 20;
 const rightBound = 360;
 const bottomBound = 360;
+let last = +new Date();
+
+function run() {
+  const now = +new Date();
+  if (now - last > 5000) { // 5 seconds
+    last = now;
+    run_once();
+  }
+}
 
 class Game {
     constructor(player1, player2) {
@@ -42,17 +51,20 @@ class Game {
         this.player2.move();
     }
 
+
+    
+
     getPlayerPositions() {
-        if(this.gameActive === true) {
-            $('body').on('keyup', (e) => {
-                // console.log(this.player1.getCurrentPosition());
-                // console.log(this.player2.getCurrentPosition());
-                // console.log(this.player1.playerSprite.position());
-                // console.log(this.player2.playerSprite.position());
+        $('body').on('keyup', (e) => {
+            // https://stackoverflow.com/questions/2924330/how-can-i-rate-limit-how-fast-a-javascript-function-allows-itself-to-be-called
+            const now = +new Date();
+            if (now - last > 65) { // 100ms
+            last = now;
                 this.generatePlayer1Trail(this.player1.getCurrentPosition().top, this.player1.getCurrentPosition().left);
                 this.generatePlayer2Trail(this.player2.getCurrentPosition().top, this.player2.getCurrentPosition().left);
-            });
-        }
+            }
+        });
+
     }
 
     generatePlayer1Trail(top, left) {
@@ -62,22 +74,24 @@ class Game {
                 return $(this).position().top === top
                     && $(this).position().left === left;
             });
-            let restore = $player1CurrentSpace.get(0);
+            
+        let restore = $player1CurrentSpace.get(0);
             
         $(restore).append(this.player1.playerSprite);
         
-        $(restore).animate({backgroundColor: 'black'}, 1000);
+        $(restore).animate({backgroundColor: 'black'}, 800);
         setTimeout(() => {
             $(restore).attr('class','dead-space');
             if($('.player-one').parent().hasClass('dead-space')) {
                 $(".player-one").remove();
             }
-        }, 1001);
+        }, 215);
         
-        $(restore).animate({backgroundColor: '#646464'}, 1000);
-        setTimeout(() => {
+        $(restore).animate({backgroundColor: '#646464'}, 3000);
+        window.setTimeout(() => {
+            console.log('Hi');
             $(restore).attr('class', 'active-space');
-        }, 10001);
+        }, 2999);
         
         // if($('.player-one').parent().hasClass('dead-space')) {
         //     $(".player-one").remove();
@@ -101,18 +115,18 @@ class Game {
 
         $(restore).append(this.player2.playerSprite);
         
-        $(restore).animate({backgroundColor: 'black'}, 450);
+        $(restore).animate({backgroundColor: 'black'}, 800);
         setTimeout(() => {
             $(restore).attr('class','dead-space');
             if($('.player-two').parent().hasClass('dead-space')) {
                 $(".player-two").remove();
             }
-        }, 450);
+        }, 215);
         
-        $(restore).animate({backgroundColor: '#646464'}, 450);
+        $(restore).animate({backgroundColor: '#646464'}, 3000);
         setTimeout(() => {
             $(restore).attr('class', 'active-space');
-        }, 451);
+        }, 2999);
     }
 
     playerScore() {
@@ -138,6 +152,7 @@ class Game {
         game.addPlayersToBoard();
         game.getSpacePositions();
         game.allowMovement();
+        // game.run();
         game.getPlayerPositions();
         // game.playerScore();
     };
@@ -155,7 +170,6 @@ class Player {
 
     move() {
             $('body').on('keyup', (e) => {
-                console.log(e.which);
                 switch(e.which) {
                     case this.leftKeyCode:
                         if(this.getCurrentPosition().left >= leftBound) {
