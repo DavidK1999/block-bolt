@@ -25,6 +25,14 @@ h1 {
     left: 10%;
 }
 
+.coin {
+    background-color: gold;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    border-radius: 50%;
+}
+
 .score {
     display: flex;
     flex-direction: column;
@@ -36,11 +44,6 @@ h1 {
     right: 10%;
 }
 
-.blue {
-    transition: 2s ease-out;
-    background-color: blue;
-    width: 20px;
-}
 
 .game-board {
     display: flex;
@@ -68,7 +71,6 @@ h1 {
 .dead-space {
     width: 20px;
     height: 20px;
-    display: hidden;
 }
 
 .player {

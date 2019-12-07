@@ -6,9 +6,6 @@ const leftBound = 20;
 const topBound = 20;
 const rightBound = 360;
 const bottomBound = 360;
-let last = +new Date();
-
-
 
 class Game {
     constructor(player1, player2) {
@@ -38,6 +35,7 @@ class Game {
     addPlayersToBoard() {
         $('.start').eq(0).append(this.player1.playerSprite);
         $('.start').eq(1).append(this.player2.playerSprite);
+        this.getPositions();
     }
 
     allowMovement() {
@@ -66,7 +64,7 @@ class Game {
             });
 
             this.player1.playerSprite.appendTo($player1CurrentSpace);
-        
+
         let $player2CurrentSpace = $gameBoard
             .find('.active-space')
             .filter(function() {
@@ -86,6 +84,12 @@ class Game {
             }
         });
     }
+
+    generateCoins() {
+        let randomNumber = Math.floor(Math.random() * $('.active-space').length + 1);
+        let coin = $('<div>(1)</div>').addClass('coin');
+        $('.active-space').eq(randomNumber).append(coin).animate({backgroundColor: '#646464'}, 900);
+    }
     
     generatePlayer1Trail(top, left) {
         let $player1CurrentSpace = $gameBoard
@@ -97,12 +101,20 @@ class Game {
             
         let restore = $player1CurrentSpace.get(0);
             
+        if(this.player1.playerSprite.siblings().hasClass('coin')) {
+            $('.coin').remove();
+            this.generateCoins();
+            return this.player1.score ++;
+        }
         
         $(restore).animate({backgroundColor: 'black'}, 800);
         setTimeout(() => {
             $(restore).attr('class','dead-space');
             if($('.player-one').parent().hasClass('dead-space')) {
-                $(".player-one").remove();
+                $('.player-one').remove()
+                this.player2.score ++;
+                console.log(this.player2.score);
+                game.start();
             }
         }, 215);
         
@@ -110,7 +122,8 @@ class Game {
         window.setTimeout(() => {
             $(restore).attr('class', 'active-space');
         }, 2999);
-        
+
+
         // if($('.player-one').parent().hasClass('dead-space')) {
         //     $(".player-one").remove();
         //     this.player2.score += 1;
@@ -165,13 +178,14 @@ class Game {
     }
 
     start() {
-        this.gameActive = true;
+        $gameBoardEdge.empty();
+        $gameBoard.empty();
         game.createBoard(400);
         game.addPlayersToBoard();
         game.getSpacePositions();
         game.allowMovement();
-        game.getPositions();
         game.getPlayerPositions();
+        game.generateCoins();
     };
 }
 
@@ -190,22 +204,22 @@ class Player {
                 switch(e.which) {
                     case this.leftKeyCode:
                         if(this.getCurrentPosition().left >= leftBound) {
-                            this.playerSprite.animate({left: '-=20'}, 100);
+                            this.playerSprite.animate({left: '-=20'}, 50);
                         } 
                         break;
                     case this.upKeyCode:
                         if(this.getCurrentPosition().top >= topBound) {
-                            this.playerSprite.animate({top: '-=20'}, 100);
+                            this.playerSprite.animate({top: '-=20'}, 50);
                         } 
                         break;
                     case this.rightKeyCode:
                         if(this.getCurrentPosition().left <= rightBound) {
-                        this.playerSprite.animate({left: '+=20'}, 100);
+                        this.playerSprite.animate({left: '+=20'}, 50);
                         }
                         break;
                     case this.downKeyCode:
                         if(this.getCurrentPosition().top <= bottomBound) {
-                            this.playerSprite.animate({top: '+=20'}, 100);
+                            this.playerSprite.animate({top: '+=20'}, 50);
                         }
                         break;
                 }
@@ -220,7 +234,6 @@ class Player {
 const player1 = new Player('player-one', [65, 87, 68, 83], 1);
 const player2 = new Player('player-two', [37, 38, 39, 40], 2);
 const game = new Game(player1, player2);
-game.start();
 
 
 // $('body').on('keyup', (e)  => {
@@ -230,3 +243,7 @@ game.start();
 //         console.log('Yo');
 //     }
 // });
+
+$(() => {
+game.start();
+});
