@@ -8,13 +8,7 @@ const rightBound = 360;
 const bottomBound = 360;
 let last = +new Date();
 
-function run() {
-  const now = +new Date();
-  if (now - last > 5000) { // 5 seconds
-    last = now;
-    run_once();
-  }
-}
+
 
 class Game {
     constructor(player1, player2) {
@@ -51,22 +45,48 @@ class Game {
         this.player2.move();
     }
 
+    getPositions() {
+        window.setInterval(() => {
+            let top1 = this.player1.getCurrentPosition().top;
+            let left1 = this.player1.getCurrentPosition().left;
 
-    
+            let top2 = this.player2.getCurrentPosition().top;
+            let left2 = this.player2.getCurrentPosition().left;
+            
+            this.appendToPresent(top1, left1, top2, left2)
+        });
+    }
+
+    appendToPresent(top1, left1, top2, left2) {
+        let $player1CurrentSpace = $gameBoard
+            .find('.active-space')
+            .filter(function() {
+                return $(this).position().top === top1
+                    && $(this).position().left === left1;
+            });
+
+            this.player1.playerSprite.appendTo($player1CurrentSpace);
+        
+        let $player2CurrentSpace = $gameBoard
+            .find('.active-space')
+            .filter(function() {
+            return $(this).position().top === top2
+                && $(this).position().left === left2;
+            });
+
+            this.player2.playerSprite.appendTo($player2CurrentSpace);
+    }
 
     getPlayerPositions() {
         $('body').on('keyup', (e) => {
-            // https://stackoverflow.com/questions/2924330/how-can-i-rate-limit-how-fast-a-javascript-function-allows-itself-to-be-called
-            const now = +new Date();
-            if (now - last > 65) { // 100ms
-            last = now;
+            if(e.which == 65 ||  e.which == 87 || e.which == 68 || e.which == 83) {
                 this.generatePlayer1Trail(this.player1.getCurrentPosition().top, this.player1.getCurrentPosition().left);
+            } else {
                 this.generatePlayer2Trail(this.player2.getCurrentPosition().top, this.player2.getCurrentPosition().left);
             }
         });
-
     }
-
+    
     generatePlayer1Trail(top, left) {
         let $player1CurrentSpace = $gameBoard
             .find(".active-space")
@@ -77,7 +97,6 @@ class Game {
             
         let restore = $player1CurrentSpace.get(0);
             
-        $(restore).append(this.player1.playerSprite);
         
         $(restore).animate({backgroundColor: 'black'}, 800);
         setTimeout(() => {
@@ -89,7 +108,6 @@ class Game {
         
         $(restore).animate({backgroundColor: '#646464'}, 3000);
         window.setTimeout(() => {
-            console.log('Hi');
             $(restore).attr('class', 'active-space');
         }, 2999);
         
@@ -152,9 +170,8 @@ class Game {
         game.addPlayersToBoard();
         game.getSpacePositions();
         game.allowMovement();
-        // game.run();
+        game.getPositions();
         game.getPlayerPositions();
-        // game.playerScore();
     };
 }
 
@@ -204,3 +221,12 @@ const player1 = new Player('player-one', [65, 87, 68, 83], 1);
 const player2 = new Player('player-two', [37, 38, 39, 40], 2);
 const game = new Game(player1, player2);
 game.start();
+
+
+// $('body').on('keyup', (e)  => {
+//     if(e.which == 65 ||  e.which == 87 || e.which == 68 || e.which == 83) {
+//         console.log('Hi');
+//     } else {
+//         console.log('Yo');
+//     }
+// });
