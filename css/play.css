@@ -33,7 +33,7 @@ h1 {
     border-radius: 50%;
 }
 
-.score {
+.score-board {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -43,6 +43,8 @@ h1 {
     position: absolute;
     right: 10%;
 }
+
+
 
 
 .game-board {

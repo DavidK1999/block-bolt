@@ -87,7 +87,7 @@ class Game {
 
     generateCoins() {
         let randomNumber = Math.floor(Math.random() * $('.active-space').length + 1);
-        let coin = $('<div>(1)</div>').addClass('coin');
+        let coin = $('<div>(I)</div>').addClass('coin');
         $('.active-space').eq(randomNumber).append(coin).animate({backgroundColor: '#646464'}, 900);
     }
     
@@ -104,7 +104,7 @@ class Game {
         if(this.player1.playerSprite.siblings().hasClass('coin')) {
             $('.coin').remove();
             this.generateCoins();
-            return this.player1.score ++;
+            return this.player1.score++;
         }
         
         $(restore).animate({backgroundColor: 'black'}, 800);
@@ -113,7 +113,6 @@ class Game {
             if($('.player-one').parent().hasClass('dead-space')) {
                 $('.player-one').remove()
                 this.player2.score ++;
-                console.log(this.player2.score);
                 game.start();
             }
         }, 215);
@@ -144,7 +143,11 @@ class Game {
         
         let restore = $player2CurrentSpace.get(0);
 
-        $(restore).append(this.player2.playerSprite);
+        if(this.player2.playerSprite.siblings().hasClass('coin')) {
+            $('.coin').remove();
+            this.generateCoins();
+            return this.player2.score ++;
+        }
         
         $(restore).animate({backgroundColor: 'black'}, 800);
         setTimeout(() => {
@@ -186,8 +189,11 @@ class Game {
         game.allowMovement();
         game.getPlayerPositions();
         game.generateCoins();
+        game.playerScore();
     };
 }
+
+
 
 class Player {
     constructor(playerSprite, keycodes, identifier) {
@@ -204,22 +210,22 @@ class Player {
                 switch(e.which) {
                     case this.leftKeyCode:
                         if(this.getCurrentPosition().left >= leftBound) {
-                            this.playerSprite.animate({left: '-=20'}, 50);
+                            this.playerSprite.animate({left: '-=20'}, 75);
                         } 
                         break;
                     case this.upKeyCode:
                         if(this.getCurrentPosition().top >= topBound) {
-                            this.playerSprite.animate({top: '-=20'}, 50);
+                            this.playerSprite.animate({top: '-=20'}, 75);
                         } 
                         break;
                     case this.rightKeyCode:
                         if(this.getCurrentPosition().left <= rightBound) {
-                        this.playerSprite.animate({left: '+=20'}, 50);
+                        this.playerSprite.animate({left: '+=20'}, 75);
                         }
                         break;
                     case this.downKeyCode:
                         if(this.getCurrentPosition().top <= bottomBound) {
-                            this.playerSprite.animate({top: '+=20'}, 50);
+                            this.playerSprite.animate({top: '+=20'}, 75);
                         }
                         break;
                 }
