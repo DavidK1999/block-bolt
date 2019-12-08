@@ -8,6 +8,7 @@ const bottomBound = 360;
 const deadSpaceTrailDelay = 50;
 const activeSpaceRestoreDelay = 1500;
 const winningScore = 5;
+let pointsOnBoard = [];
 
 class Game {
     constructor(player1, player2) {
@@ -30,9 +31,18 @@ class Game {
         $gameBoard.children('.active-space').eq(numberOfSpaces - 2).attr('class', 'start');
     }
 
-    generatePoints() {
-        let coin = $('<div>(I)</div>').addClass('coin');
+    generatePoints(numberOfPoints) {
+        for(let i = 0; i < numberOfPoints; i++) {
+            let randomNumber = Math.floor(Math.random() * $('.active-space').length + 1);
+            let coin = $('<div>(I)</div>').addClass('coin').attr('id', `coin${i}`);
+            $('.active-space').eq(randomNumber).append(coin);
+        }
+    }
+
+    replacePoint(pointID) {
+        $(`#${pointID}`).remove();
         let randomNumber = Math.floor(Math.random() * $('.active-space').length + 1);
+        let coin = $('<div>(I)</div>').addClass('coin').attr('id', pointID);
         $('.active-space').eq(randomNumber).append(coin);
     }
 
@@ -58,8 +68,7 @@ class Game {
     }
 
     getPlayerCurrentPositions() {
-        window.setInterval(() => {
-
+        setInterval(() => {
             //Player One Current Positions
             let top1 = this.player1.getCurrentPosition().top;
             let left1 = this.player1.getCurrentPosition().left;
@@ -72,7 +81,6 @@ class Game {
     }
 
     appendPlayerBasedOnCurrentPosition(top1, left1, top2, left2) {
-
         // Filters for the space that matches the players current position after they have been animated a direction
         let $player1CurrentSpace = $gameBoard
             .find('.active-space')
@@ -80,8 +88,7 @@ class Game {
                 return $(this).position().top === top1
                     && $(this).position().left === left1;
             });
-
-            // Appends the player to that space 
+        // Appends the player to that space 
             this.player1.playerSprite.appendTo($player1CurrentSpace);
 
         let $player2CurrentSpace = $gameBoard
@@ -92,7 +99,6 @@ class Game {
             });
 
             this.player2.playerSprite.appendTo($player2CurrentSpace);
-
 
             this.checkPointCollision(this.player1.playerSprite, this.player2.playerSprite);
     }
@@ -127,14 +133,6 @@ class Game {
             if($('.player-one').parent().hasClass('dead-space')) $(".player-one").remove()
         }, deadSpaceTrailDelay);
         $player1PreviousSpace.animate({backgroundColor: '#646464'}, activeSpaceRestoreDelay, "linear", () => $player1PreviousSpace.removeClass('dead-space'));
-
-
-        //     this.player2.score += 1;
-        //     window.setTimeout(() => {
-        //         window.alert('Player 2 wins');
-        //     }, 500);
-        //     this.reset();
-        // };
     }
     
     generatePlayer2Trail(top, left) {
@@ -145,32 +143,31 @@ class Game {
                     && $(this).position().left === left;
             });
         
-        if(this.player2.playerSprite.siblings().hasClass('coin')) {
-            $('.coin').remove();
-            this.generateCoins();
-            return this.player2.score ++;
-        }
+        // if(this.player2.playerSprite.siblings().hasClass('coin')) {
+        //     $('.coin').remove();
+        //     this.generateCoins();
+        //     return this.player2.score ++;
+        // }
         
         $player2PreviousSpace.animate({backgroundColor: 'black'}, deadSpaceTrailDelay, "linear");
         setTimeout(() => {
             $player2PreviousSpace.addClass('dead-space');
-            if($('.player-two').parent().hasClass('dead-space')) $(".player-two").remove()
+            if($('.player-two').parent().hasClass('dead-space')) $(".player-two").remove();
         }, deadSpaceTrailDelay);
         $player2PreviousSpace.animate({backgroundColor: '#646464'}, activeSpaceRestoreDelay, "linear", () => $player2PreviousSpace.removeClass('dead-space'));
     }
 
     checkPointCollision(player1, player2) {
         if(player1.siblings().hasClass('coin')) {
-            $('.coin').remove();
-            this.generatePoints();
+            this.replacePoint(player1.siblings().attr('id'));
             return this.player1.score++;
         }
         
-        if(player2.siblings().hasClass('coin')) {
-            $('.coin').remove();
-            this.generatePoints();
-            return this.player2.score++;
-        }
+        // if(player2.siblings().hasClass('coin')) {
+        //     $('.coin').remove();
+        //     this.generatePoints();
+        //     return this.player2.score++;
+        // }
     }
 
     displayPlayerScore() {
@@ -181,13 +178,8 @@ class Game {
     }
 
     checkForWin() {
-        if(this.player1.score === winningScore) {
-            alert('Player 1 Wins');
-        } 
-        
-        if(this.player2.score === winningScore) {
-            alert('Player 2 Wins');
-        } 
+        if(this.player1.score === winningScore) alert('Player 1 Wins');
+        if(this.player2.score === winningScore) alert('Player 2 Wins');
     }
     start() {
         $gameBoardEdge.empty();
@@ -197,13 +189,12 @@ class Game {
         game.addPlayersToBoard();
         game.allowMovement();
         game.getPlayerPreviousPositions();
-        game.generatePoints();
+        game.generatePoints(3);
         game.displayPlayerScore();
         game.checkForWin();
+        console.log(pointsOnBoard);
     };
 }
-
-
 
 class Player {
     constructor(playerSprite, keycodes, identifier) {
@@ -216,41 +207,31 @@ class Player {
     }
 
     move() {
-            $('body').on('keyup', (e) => {
-                switch(e.which) {
-                    case this.leftKeyCode:
-                        if(this.getCurrentPosition().left >= leftBound) {
-                            this.playerSprite.animate({left: '-=20'}, deadSpaceTrailDelay);
-                        } 
-                        break;
-                    case this.upKeyCode:
-                        if(this.getCurrentPosition().top >= topBound) {
-                            this.playerSprite.animate({top: '-=20'}, deadSpaceTrailDelay);
-                        } 
-                        break;
-                    case this.rightKeyCode:
-                        if(this.getCurrentPosition().left <= rightBound) {
-                        this.playerSprite.animate({left: '+=20'}, deadSpaceTrailDelay);
-                        }
-                        break;
-                    case this.downKeyCode:
-                        if(this.getCurrentPosition().top <= bottomBound) {
-                            this.playerSprite.animate({top: '+=20'}, deadSpaceTrailDelay);
-                        }
-                        break;
-                }
-            });
-        }
+        $('body').on('keyup', (e) => {
+            switch(e.which) {
+                case this.leftKeyCode:
+                    if(this.getCurrentPosition().left >= leftBound) this.playerSprite.animate({left: '-=20'}, deadSpaceTrailDelay);
+                    break;
+                case this.upKeyCode:
+                    if(this.getCurrentPosition().top >= topBound) this.playerSprite.animate({top: '-=20'}, deadSpaceTrailDelay);
+                    break;
+                case this.rightKeyCode:
+                    if(this.getCurrentPosition().left <= rightBound) this.playerSprite.animate({left: '+=20'}, deadSpaceTrailDelay);
+                    break;
+                case this.downKeyCode:
+                    if(this.getCurrentPosition().top <= bottomBound) this.playerSprite.animate({top: '+=20'}, deadSpaceTrailDelay);
+                    break;
+            }
+        });
+    }
 
     getCurrentPosition() {
         return this.playerSprite.position();
     }
 }
-
 const player1 = new Player('player-one', [65, 87, 68, 83], 1);
 const player2 = new Player('player-two', [37, 38, 39, 40], 2);
 const game = new Game(player1, player2);
-
 $(() => {
 game.start();
 });
