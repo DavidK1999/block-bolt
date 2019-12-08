@@ -107,7 +107,7 @@ class Game {
             return this.player1.score++;
         }
         
-        $(restore).animate({backgroundColor: 'black'}, 5000);
+        $(restore).animate({backgroundColor: 'black'}, 800);
         setTimeout(() => {
             $(restore).attr('class','dead-space');
             if($('.player-one').parent().hasClass('dead-space')) {
@@ -149,7 +149,7 @@ class Game {
             return this.player2.score ++;
         }
         
-        $(restore).animate({backgroundColor: 'black'}, 5000);
+        $(restore).animate({backgroundColor: 'black'}, 800);
         setTimeout(() => {
             $(restore).attr('class','dead-space');
             if($('.player-two').parent().hasClass('dead-space')) {
