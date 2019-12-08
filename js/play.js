@@ -11,9 +11,16 @@ const winningScore = 5;
 let pointsOnBoard = [];
 
 class Game {
-    constructor(player1, player2) {
-        this.player1 = player1;
-        this.player2 = player2;
+    constructor() {
+        this.player1;
+        this.player2;
+        this.player1Score = 0;
+        this.player2Score = 0;
+    }
+
+    createPlayers() {
+        this.player1= new Player('player-one', [65, 87, 68, 83], 1);
+        this.player2 = new Player('player-two', [37, 38, 39, 40], 2);
     }
 
     createBoard(numberOfSpaces) {
@@ -44,7 +51,7 @@ class Game {
         $(`#${pointID}`).remove();
         let randomNumber = Math.floor(Math.random() * $('.active-space').length + 1);
         let point = $('<div>').addClass('point').attr('id', pointID);
-        $('.active-space').eq(randomNumber).append(point);
+        setTimeout(() => {$('.active-space').eq(randomNumber).append(point)}, 50);
     }
 
     getSpaceCoordinates() {
@@ -56,20 +63,21 @@ class Game {
     }
 
     addPlayersToBoard() {
+        console.log(this.player1);
         $('.start').eq(0).append(this.player1.playerSprite);
         $('.start').eq(1).append(this.player2.playerSprite);
         
         //Gets Player Current Positions after they have been added to the board
         this.getPlayerCurrentPositions();
     }
-
+    
     allowMovement() {
         this.player1.move();
         this.player2.move();
     }
 
     getPlayerCurrentPositions() {
-        setInterval(() => {
+        return window.setInterval(() => {
             //Player One Current Positions
             let top1 = this.player1.getCurrentPosition().top;
             let left1 = this.player1.getCurrentPosition().left;
@@ -89,8 +97,10 @@ class Game {
                 return $(this).position().top === top1
                     && $(this).position().left === left1;
             });
-        // Appends the player to that space 
+            // Appends the player to that space 
+
             this.player1.playerSprite.appendTo($player1CurrentSpace);
+            
 
         let $player2CurrentSpace = $gameBoard
             .find('.active-space')
@@ -100,7 +110,7 @@ class Game {
             });
 
             this.player2.playerSprite.appendTo($player2CurrentSpace);
-
+            
             this.checkPointCollision(this.player1.playerSprite, this.player2.playerSprite);
     }
 
@@ -131,12 +141,17 @@ class Game {
         $player1PreviousSpace.animate({backgroundColor: `white`}, deadSpaceTrailDelay, "linear");
         setTimeout(() => {
             $player1PreviousSpace.addClass('dead-space');
-            if($('.player-one').parent().hasClass('dead-space')) $(".player-one").remove()
+            if($('.player-one').parent().hasClass('dead-space')) {
+                this.player1.playerSprite.remove();
+                setTimeout(() => {this.respawnPlayer1()}, 5000);
+            }
         }, deadSpaceTrailDelay);
         $player1PreviousSpace.animate({backgroundColor: 'black'}, activeSpaceRestoreDelay, "linear", () => $player1PreviousSpace.removeClass('dead-space'));
     }
     
     generatePlayer2Trail(top, left) {
+        console.log(top);
+        console.log(left);
         let $player2PreviousSpace = $gameBoard
             .find(".active-space")
             .filter(function() {
@@ -147,27 +162,46 @@ class Game {
     $player2PreviousSpace.animate({backgroundColor: `white`}, deadSpaceTrailDelay, "linear");
         setTimeout(() => {
             $player2PreviousSpace.addClass('dead-space');
-            if($('.player-two').parent().hasClass('dead-space')) $(".player-two").remove();
+            if($('.player-two').parent().hasClass('dead-space')) {
+                console.log('Dead');
+                this.player2.playerSprite.remove();
+                setTimeout(() => {this.respawnPlayer2()}, 5000);
+            }
         }, deadSpaceTrailDelay);
         $player2PreviousSpace.animate({backgroundColor: 'black'}, activeSpaceRestoreDelay, "linear", () => $player2PreviousSpace.removeClass('dead-space'));
+    }
+
+    respawnPlayer1() {
+        this.player1 = new Player('player-one', [65, 87, 68, 83], 1);
+        this.player1.playerSprite.appendTo('#0');
+        this.player1.playerSprite.position();
+        this.player1.move();
+    }
+    
+    respawnPlayer2() {
+        this.player2.playerSprite.remove();
+        this.player2 = new Player('player-two', [37, 38, 39, 40], 2);
+        this.player2.playerSprite.appendTo('#399');
+        this.player2.playerSprite.position();
+        this.player2.move();
     }
 
     checkPointCollision(player1, player2) {
         if(player1.siblings().hasClass('point')) {
             this.replacePoint(player1.siblings().attr('id'));
-            return this.player1.score++;
+            return this.player1Score++;
         }
         
         if(player2.siblings().hasClass('point')) {
             this.replacePoint(player2.siblings().attr('id'));
-            return this.player2.score++;
+            return this.player2Score++;
         }
     }
 
     displayPlayerScore() {
         window.setInterval(() => {
-            $('.player-one-score').text(`Player 1 : ${this.player1.score}`);
-            $('.player-two-score').text(`Player 2 : ${this.player2.score}`);
+            $('.player-one-score').text(`Player 1 : ${this.player1Score}`);
+            $('.player-two-score').text(`Player 2 : ${this.player2Score}`);
         });
     }
 
@@ -189,9 +223,10 @@ class Game {
     start() {
         $gameBoardEdge.empty();
         $gameBoard.empty();
+        game.createPlayers();
         game.createBoard(400);
+        this.addPlayersToBoard();
         game.getSpaceCoordinates();
-        game.addPlayersToBoard();
         game.allowMovement();
         game.getPlayerPreviousPositions();
         game.generatePoints(3);
@@ -210,6 +245,7 @@ class Player {
         this.rightKeyCode = keycodes[2];
         this.downKeyCode = keycodes[3];
         this.score = 0;
+        this.identifier = identifier;
     }
 
     move() {
@@ -235,9 +271,9 @@ class Player {
         return this.playerSprite.position();
     }
 }
-const player1 = new Player('player-one', [65, 87, 68, 83], 1);
-const player2 = new Player('player-two', [37, 38, 39, 40], 2);
-const game = new Game(player1, player2);
+// const player1 = new Player('player-one', [65, 87, 68, 83], 1);
+// const player2 = new Player('player-two', [37, 38, 39, 40], 2);
+const game = new Game();
 $(() => {
 game.start();
 });
