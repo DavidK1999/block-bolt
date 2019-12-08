@@ -104,15 +104,16 @@ ul {
     width: 16px;
     height: 16px;
     position: absolute;
+    background-color: white;
 }
 
-.player-one {
+/* .player-one {
     background-color: orange;
 }
 
 .player-two {
     background-color: aqua;
-}
+} */
 
 .start {
     width: 20px;
