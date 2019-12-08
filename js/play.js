@@ -7,6 +7,7 @@ const rightBound = 360;
 const bottomBound = 360;
 const deadSpaceTrailDelay = 50;
 const activeSpaceRestoreDelay = 1500;
+const respawnTime = 2000;
 const winningScore = 5;
 let pointsOnBoard = [];
 
@@ -40,9 +41,18 @@ class Game {
 
     generatePoints(numberOfPoints) {
         for(let i = 0; i < numberOfPoints; i++) {
-            let randomNumber = Math.floor(Math.random() * $('.active-space').length + 1);
             let point = $('<div>').addClass('point').attr('id', `point${i}`);
-            $('.active-space').eq(randomNumber).append(point);
+
+            let spawnLimits = $gameBoard
+            .find(".active-space")
+            .filter(function() {
+                return $(this).position().top >= topBound
+                    && $(this).position().top <= bottomBound
+                    && $(this).position().left >= leftBound
+                    && $(this).position().left <= rightBound;
+            });
+            let randomNumber = Math.floor(Math.random() * spawnLimits.length + 1);
+            spawnLimits.eq(randomNumber).append(point);
         }
     }
 
@@ -51,7 +61,7 @@ class Game {
         $(`#${pointID}`).remove();
         let randomNumber = Math.floor(Math.random() * $('.active-space').length + 1);
         let point = $('<div>').addClass('point').attr('id', pointID);
-        setTimeout(() => {$('.active-space').eq(randomNumber).append(point)}, 50);
+        setTimeout(() => {$('.active-space').eq(randomNumber).append(point)}, 10);
     }
 
     getSpaceCoordinates() {
@@ -142,8 +152,9 @@ class Game {
         setTimeout(() => {
             $player1PreviousSpace.addClass('dead-space');
             if($('.player-one').parent().hasClass('dead-space')) {
+                $('audio')[1].play();
                 this.player1.playerSprite.remove();
-                setTimeout(() => {this.respawnPlayer1()}, 5000);
+                setTimeout(() => {this.respawnPlayer1()}, respawnTime);
             }
         }, deadSpaceTrailDelay);
         $player1PreviousSpace.animate({backgroundColor: 'black'}, activeSpaceRestoreDelay, "linear", () => $player1PreviousSpace.removeClass('dead-space'));
@@ -163,9 +174,10 @@ class Game {
         setTimeout(() => {
             $player2PreviousSpace.addClass('dead-space');
             if($('.player-two').parent().hasClass('dead-space')) {
+                $('audio')[1].play();
                 console.log('Dead');
                 this.player2.playerSprite.remove();
-                setTimeout(() => {this.respawnPlayer2()}, 5000);
+                setTimeout(() => {this.respawnPlayer2()}, respawnTime);
             }
         }, deadSpaceTrailDelay);
         $player2PreviousSpace.animate({backgroundColor: 'black'}, activeSpaceRestoreDelay, "linear", () => $player2PreviousSpace.removeClass('dead-space'));
@@ -187,6 +199,11 @@ class Game {
     }
 
     checkPointCollision(player1, player2) {
+        if($('.player').siblings().hasClass('point')) {
+            $('audio')[2].play();
+        };
+
+
         if(player1.siblings().hasClass('point')) {
             this.replacePoint(player1.siblings().attr('id'));
             return this.player1Score++;
@@ -221,19 +238,16 @@ class Game {
         if(this.player2.score === winningScore) alert('Player 2 Wins');
     }
     start() {
-        $gameBoardEdge.empty();
-        $gameBoard.empty();
         game.createPlayers();
         game.createBoard(400);
         this.addPlayersToBoard();
         game.getSpaceCoordinates();
         game.allowMovement();
         game.getPlayerPreviousPositions();
-        game.generatePoints(3);
+        game.generatePoints(4);
         game.displayPlayerScore();
         game.updateColors();
         game.checkForWin();
-        console.log(pointsOnBoard);
     };
 }
 
@@ -275,5 +289,6 @@ class Player {
 // const player2 = new Player('player-two', [37, 38, 39, 40], 2);
 const game = new Game();
 $(() => {
-game.start();
+    $('audio')[0].play();
+    game.start();
 });

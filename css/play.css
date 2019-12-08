@@ -29,14 +29,13 @@ h1 {
     position: absolute;
     left: 10%;
 }
-
 .point {
     margin: 0;
     width: 16px;
     height: 16px;
     text-align: center;
     border-radius: 50%;
-    border: 2px solid black;
+    border: 2px solid white;
 }
 
 .score-board {
@@ -53,17 +52,24 @@ h1 {
 
 .instructions {
     font-size: 30px;
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     width: 20%;
     position: absolute;
-    bottom: 5%;
+    bottom: 4%;
+}
+
+.instructions h2 {
+    margin: 0;
 }
 
 ul {
     list-style: none;
     font-size: 20px;
     width:100%;
-    text-align: left; 
+    margin-bottom: 5%;
 }
 
 .game-board {
