@@ -128,12 +128,12 @@ class Game {
         // before being polled for it's position more than once. After this, the previous space is then given the "dead-space" class
         // Animation and class delay is the same to let the player know when it is safe to move back onto a space
         
-        $player1PreviousSpace.animate({backgroundColor: `black`}, deadSpaceTrailDelay, "linear");
+        $player1PreviousSpace.animate({backgroundColor: `white`}, deadSpaceTrailDelay, "linear");
         setTimeout(() => {
             $player1PreviousSpace.addClass('dead-space');
             if($('.player-one').parent().hasClass('dead-space')) $(".player-one").remove()
         }, deadSpaceTrailDelay);
-        $player1PreviousSpace.animate({backgroundColor: '#646464'}, activeSpaceRestoreDelay, "linear", () => $player1PreviousSpace.removeClass('dead-space'));
+        $player1PreviousSpace.animate({backgroundColor: 'black'}, activeSpaceRestoreDelay, "linear", () => $player1PreviousSpace.removeClass('dead-space'));
     }
     
     generatePlayer2Trail(top, left) {
@@ -144,12 +144,12 @@ class Game {
                     && $(this).position().left === left;
             });
 
-    $player2PreviousSpace.animate({backgroundColor: `black`}, deadSpaceTrailDelay, "linear");
+    $player2PreviousSpace.animate({backgroundColor: `white`}, deadSpaceTrailDelay, "linear");
         setTimeout(() => {
             $player2PreviousSpace.addClass('dead-space');
             if($('.player-two').parent().hasClass('dead-space')) $(".player-two").remove();
         }, deadSpaceTrailDelay);
-        $player2PreviousSpace.animate({backgroundColor: '#646464'}, activeSpaceRestoreDelay, "linear", () => $player2PreviousSpace.removeClass('dead-space'));
+        $player2PreviousSpace.animate({backgroundColor: 'black'}, activeSpaceRestoreDelay, "linear", () => $player2PreviousSpace.removeClass('dead-space'));
     }
 
     checkPointCollision(player1, player2) {

@@ -86,7 +86,7 @@ ul {
 .active-space {
     width: 20px;
     height: 20px;
-    background-color: #646464;
+    background-color: black;
 }
 
 .dead-space {
