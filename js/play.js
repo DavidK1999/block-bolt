@@ -34,16 +34,17 @@ class Game {
     generatePoints(numberOfPoints) {
         for(let i = 0; i < numberOfPoints; i++) {
             let randomNumber = Math.floor(Math.random() * $('.active-space').length + 1);
-            let coin = $('<div>(I)</div>').addClass('coin').attr('id', `coin${i}`);
-            $('.active-space').eq(randomNumber).append(coin);
+            let point = $('<div>').addClass('point').attr('id', `point${i}`);
+            $('.active-space').eq(randomNumber).append(point);
         }
     }
 
     replacePoint(pointID) {
+        // Gets the id of the point touched by player and replaces it somewhere else on the board
         $(`#${pointID}`).remove();
         let randomNumber = Math.floor(Math.random() * $('.active-space').length + 1);
-        let coin = $('<div>(I)</div>').addClass('coin').attr('id', pointID);
-        $('.active-space').eq(randomNumber).append(coin);
+        let point = $('<div>').addClass('point').attr('id', pointID);
+        $('.active-space').eq(randomNumber).append(point);
     }
 
     getSpaceCoordinates() {
@@ -122,12 +123,12 @@ class Game {
                 return $(this).position().top === top
                     && $(this).position().left === left;
             });
-        
+
         // Animates the previous spaces black to denote a dead space. A delay is added to then allow the player to move to the next space 
         // before being polled for it's position more than once. After this, the previous space is then given the "dead-space" class
         // Animation and class delay is the same to let the player know when it is safe to move back onto a space
         
-        $player1PreviousSpace.animate({backgroundColor: 'black'}, deadSpaceTrailDelay, "linear");
+        $player1PreviousSpace.animate({backgroundColor: `black`}, deadSpaceTrailDelay, "linear");
         setTimeout(() => {
             $player1PreviousSpace.addClass('dead-space');
             if($('.player-one').parent().hasClass('dead-space')) $(".player-one").remove()
@@ -142,14 +143,8 @@ class Game {
                 return $(this).position().top === top
                     && $(this).position().left === left;
             });
-        
-        // if(this.player2.playerSprite.siblings().hasClass('coin')) {
-        //     $('.coin').remove();
-        //     this.generateCoins();
-        //     return this.player2.score ++;
-        // }
-        
-        $player2PreviousSpace.animate({backgroundColor: 'black'}, deadSpaceTrailDelay, "linear");
+
+    $player2PreviousSpace.animate({backgroundColor: `black`}, deadSpaceTrailDelay, "linear");
         setTimeout(() => {
             $player2PreviousSpace.addClass('dead-space');
             if($('.player-two').parent().hasClass('dead-space')) $(".player-two").remove();
@@ -158,16 +153,15 @@ class Game {
     }
 
     checkPointCollision(player1, player2) {
-        if(player1.siblings().hasClass('coin')) {
+        if(player1.siblings().hasClass('point')) {
             this.replacePoint(player1.siblings().attr('id'));
             return this.player1.score++;
         }
         
-        // if(player2.siblings().hasClass('coin')) {
-        //     $('.coin').remove();
-        //     this.generatePoints();
-        //     return this.player2.score++;
-        // }
+        if(player2.siblings().hasClass('point')) {
+            this.replacePoint(player2.siblings().attr('id'));
+            return this.player2.score++;
+        }
     }
 
     displayPlayerScore() {
@@ -175,6 +169,17 @@ class Game {
             $('.player-one-score').text(`Player 1 : ${this.player1.score}`);
             $('.player-two-score').text(`Player 2 : ${this.player2.score}`);
         });
+    }
+
+    updateColors() {
+        window.setInterval(() => {
+            let r = Math.floor(Math.random() * 256);
+            let g = Math.floor(Math.random() * 256);
+            let b = Math.floor(Math.random() * 256);
+            $gameBoardEdge.animate({backgroundColor: `rgb(${r}, ${g}, ${b})`});
+            $('.start').animate({backgroundColor: `rgb(${r}, ${g}, ${b})`});
+            $('.point').animate({backgroundColor: `rgb(${r}, ${g}, ${b})`});
+        }, 1000);
     }
 
     checkForWin() {
@@ -191,6 +196,7 @@ class Game {
         game.getPlayerPreviousPositions();
         game.generatePoints(3);
         game.displayPlayerScore();
+        game.updateColors();
         game.checkForWin();
         console.log(pointsOnBoard);
     };

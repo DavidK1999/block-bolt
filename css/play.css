@@ -7,14 +7,19 @@ body {
     position: relative;
     height: 100vh;
     overflow: hidden;
-    font-family: 'Bebas Neue', cursive;}
+    font-family: 'Bebas Neue', cursive;
+    background-color: black;
+    color: white;
+}
 
 h1 {
+    font-size: 40px;
     position: absolute;
     top: 5%;
 }
 
 .controls {
+    font-size: 30px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -25,15 +30,17 @@ h1 {
     left: 10%;
 }
 
-.coin {
-    background-color: gold;
-    width: 20px;
-    height: 20px;
+.point {
+    margin: 0;
+    width: 16px;
+    height: 16px;
     text-align: center;
     border-radius: 50%;
+    border: 2px solid black;
 }
 
 .score-board {
+    font-size: 30px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -45,6 +52,7 @@ h1 {
 }
 
 .instructions {
+    font-size: 30px;
     text-align: center;
     width: 20%;
     position: absolute;
@@ -52,6 +60,7 @@ h1 {
 }
 
 ul {
+    list-style: none;
     font-size: 20px;
     width:100%;
     text-align: left; 
@@ -86,11 +95,15 @@ ul {
 }
 
 .player {
-    text-align: center;
-    width: 20px;
-    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    border: 2px solid black;
+    color: black;
+    font-size: 14px;
+    width: 16px;
+    height: 16px;
     position: absolute;
-    font-weight: bold;
 }
 
 .player-one {
