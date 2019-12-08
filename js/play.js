@@ -1,17 +1,18 @@
 const $gameBoard = $('<div>').addClass('game-board');
 const $gameBoardEdge = $('<div>').addClass('game-board-edges');
-const $spaceOffset = [];
-let $player1History = [];
+const $spaceCooridnates = [];
 const leftBound = 20;
 const topBound = 20;
 const rightBound = 360;
 const bottomBound = 360;
+const deadSpaceTrailDelay = 75;
+const activeSpaceRestoreDelay = 1500;
+const winningScore = 5;
 
 class Game {
     constructor(player1, player2) {
         this.player1 = player1;
         this.player2 = player2;
-        this.gameActive = false;
     }
 
     createBoard(numberOfSpaces) {
@@ -19,23 +20,36 @@ class Game {
             let $activeSpace = $('<div>').addClass('active-space').attr('id', i);
             $gameBoard.append($activeSpace);
         }
+        //Adds the visual "bound" to contain the players
         $('body').append($gameBoardEdge);
+        
         $gameBoardEdge.append($gameBoard);
+        
+        // Creates starting spaces for players
         $gameBoard.children('.active-space').eq(0).attr('class', 'start');
         $gameBoard.children('.active-space').eq(numberOfSpaces - 2).attr('class', 'start');
     }
 
-    getSpacePositions() {
-        let $blocks = $gameBoard.children('.active-space');
-        for(let i = 0; i < $blocks.length; i++) {
-            $spaceOffset.push($blocks.eq(i).offset());
+    generatePoints() {
+        let coin = $('<div>(I)</div>').addClass('coin');
+        let randomNumber = Math.floor(Math.random() * $('.active-space').length + 1);
+        $('.active-space').eq(randomNumber).append(coin);
+    }
+
+    getSpaceCoordinates() {
+        // Useful for getting bound information
+        let $spaces = $gameBoard.children('.active-space');
+        for(let i = 0; i < $spaces.length; i++) {
+            $spaceCooridnates.push($spaces.eq(i).offset());
         }
     }
 
     addPlayersToBoard() {
         $('.start').eq(0).append(this.player1.playerSprite);
         $('.start').eq(1).append(this.player2.playerSprite);
-        this.getPositions();
+        
+        //Gets Player Current Positions after they have been added to the board
+        this.getPlayerCurrentPositions();
     }
 
     allowMovement() {
@@ -43,19 +57,23 @@ class Game {
         this.player2.move();
     }
 
-    getPositions() {
+    getPlayerCurrentPositions() {
         window.setInterval(() => {
+
+            //Player One Current Positions
             let top1 = this.player1.getCurrentPosition().top;
             let left1 = this.player1.getCurrentPosition().left;
-
+            //Player Two Current Positions
             let top2 = this.player2.getCurrentPosition().top;
             let left2 = this.player2.getCurrentPosition().left;
             
-            this.appendToPresent(top1, left1, top2, left2)
+            this.appendPlayerBasedOnCurrentPosition(top1, left1, top2, left2)
         });
     }
 
-    appendToPresent(top1, left1, top2, left2) {
+    appendPlayerBasedOnCurrentPosition(top1, left1, top2, left2) {
+
+        // Filters for the space that matches the players current position after they have been animated a direction
         let $player1CurrentSpace = $gameBoard
             .find('.active-space')
             .filter(function() {
@@ -63,6 +81,7 @@ class Game {
                     && $(this).position().left === left1;
             });
 
+            // Appends the player to that space 
             this.player1.playerSprite.appendTo($player1CurrentSpace);
 
         let $player2CurrentSpace = $gameBoard
@@ -73,9 +92,13 @@ class Game {
             });
 
             this.player2.playerSprite.appendTo($player2CurrentSpace);
+
+
+            this.checkPointCollision(this.player1.playerSprite, this.player2.playerSprite);
     }
 
-    getPlayerPositions() {
+    getPlayerPreviousPositions() {
+        // Gets the player previous space as this information is updated when the player presses the key, not after they have been animated a direction
         $('body').on('keyup', (e) => {
             if(e.which == 65 ||  e.which == 87 || e.which == 68 || e.which == 83) {
                 this.generatePlayer1Trail(this.player1.getCurrentPosition().top, this.player1.getCurrentPosition().left);
@@ -84,47 +107,34 @@ class Game {
             }
         });
     }
-
-    generateCoins() {
-        let randomNumber = Math.floor(Math.random() * $('.active-space').length + 1);
-        let coin = $('<div>(I)</div>').addClass('coin');
-        $('.active-space').eq(randomNumber).append(coin).animate({backgroundColor: '#646464'}, 900);
-    }
     
     generatePlayer1Trail(top, left) {
-        let $player1CurrentSpace = $gameBoard
+        // Filters for spaces that are not yet "dead spaces" and that are based on the players previous positions
+        let $player1PreviousSpace = $gameBoard
             .find(".active-space")
             .filter(function() {
                 return $(this).position().top === top
                     && $(this).position().left === left;
             });
             
-        let restore = $player1CurrentSpace.get(0);
-            
-        if(this.player1.playerSprite.siblings().hasClass('coin')) {
-            $('.coin').remove();
-            this.generateCoins();
-            return this.player1.score++;
-        }
+        // if(this.player1.playerSprite.siblings().hasClass('coin')) {
+        //     $('.coin').remove();
+        //     this.generateCoins();
+        //     return this.player1.score++;
+        // }
         
-        $(restore).animate({backgroundColor: 'black'}, 800);
+        // Animates the previous spaces black to denote a dead space. A delay is added to then allow the player to move to the next space 
+        // before being polled for it's position more than once. After this, the previous space is then given the "dead-space" class
+        // Animation and class delay is the same to let the player know when it is safe to move back onto a space
+        
+        $player1PreviousSpace.animate({backgroundColor: 'black'}, deadSpaceTrailDelay, "linear");
         setTimeout(() => {
-            $(restore).attr('class','dead-space');
-            if($('.player-one').parent().hasClass('dead-space')) {
-                $('.player-one').remove()
-                this.player2.score ++;
-                game.start();
-            }
-        }, 215);
-        
-        $(restore).animate({backgroundColor: '#646464'}, 3000);
-        window.setTimeout(() => {
-            $(restore).attr('class', 'active-space');
-        }, 2999);
+            $player1PreviousSpace.addClass('dead-space');
+            if($('.player-one').parent().hasClass('dead-space')) $(".player-one").remove()
+        }, deadSpaceTrailDelay);
+        $player1PreviousSpace.animate({backgroundColor: '#646464'}, activeSpaceRestoreDelay, "linear", () => $player1PreviousSpace.removeClass('dead-space'));
 
 
-        // if($('.player-one').parent().hasClass('dead-space')) {
-        //     $(".player-one").remove();
         //     this.player2.score += 1;
         //     window.setTimeout(() => {
         //         window.alert('Player 2 wins');
@@ -134,62 +144,68 @@ class Game {
     }
     
     generatePlayer2Trail(top, left) {
-        let $player2CurrentSpace = $gameBoard
+        let $player2PreviousSpace = $gameBoard
             .find(".active-space")
             .filter(function() {
                 return $(this).position().top === top
                     && $(this).position().left === left;
             });
         
-        let restore = $player2CurrentSpace.get(0);
-
         if(this.player2.playerSprite.siblings().hasClass('coin')) {
             $('.coin').remove();
             this.generateCoins();
             return this.player2.score ++;
         }
         
-        $(restore).animate({backgroundColor: 'black'}, 800);
+        $player2PreviousSpace.animate({backgroundColor: 'black'}, deadSpaceTrailDelay, "linear");
         setTimeout(() => {
-            $(restore).attr('class','dead-space');
-            if($('.player-two').parent().hasClass('dead-space')) {
-                $(".player-two").remove();
-            }
-        }, 215);
-        
-        $(restore).animate({backgroundColor: '#646464'}, 3000);
-        setTimeout(() => {
-            $(restore).attr('class', 'active-space');
-        }, 2999);
+            $player2PreviousSpace.addClass('dead-space');
+            if($('.player-two').parent().hasClass('dead-space')) $(".player-two").remove()
+        }, deadSpaceTrailDelay);
+        $player2PreviousSpace.animate({backgroundColor: '#646464'}, activeSpaceRestoreDelay, "linear", () => $player2PreviousSpace.removeClass('dead-space'));
     }
 
-    playerScore() {
+    checkPointCollision(player1, player2) {
+        if(player1.siblings().hasClass('coin')) {
+            $('.coin').remove();
+            this.generatePoints();
+            return this.player1.score++;
+        }
+        
+        if(player2.siblings().hasClass('coin')) {
+            $('.coin').remove();
+            this.generatePoints();
+            return this.player2.score++;
+        }
+    }
+
+    displayPlayerScore() {
         window.setInterval(() => {
             $('.player-one-score').text(`Player 1: ${this.player1.score}`);
             $('.player-two-score').text(`Player 2: ${this.player2.score}`);
         });
-    
     }
 
-    reset() {
-        window.setTimeout(() => {
-            $gameBoardEdge.remove();
-            $gameBoard.remove();
-            location.reload();
-
-        }, 500);
+    checkForWin() {
+        if(this.player1.score === winningScore) {
+            alert('Player 1 Wins');
+        } 
+        
+        if(this.player2.score === winningScore) {
+            alert('Player 2 Wins');
+        } 
     }
-
     start() {
         $gameBoardEdge.empty();
         $gameBoard.empty();
         game.createBoard(400);
+        game.getSpaceCoordinates();
         game.addPlayersToBoard();
-        game.getSpacePositions();
         game.allowMovement();
-        game.getPlayerPositions();
-        game.generateCoins();
-        game.playerScore();
+        game.getPlayerPreviousPositions();
+        game.generatePoints();
+        game.displayPlayerScore();
+        game.checkForWin();
     };
 }
 
@@ -240,15 +256,6 @@ class Player {
 const player1 = new Player('player-one', [65, 87, 68, 83], 1);
 const player2 = new Player('player-two', [37, 38, 39, 40], 2);
 const game = new Game(player1, player2);
-
-
-// $('body').on('keyup', (e)  => {
-//     if(e.which == 65 ||  e.which == 87 || e.which == 68 || e.which == 83) {
-//         console.log('Hi');
-//     } else {
-//         console.log('Yo');
-//     }
-// });
 
 $(() => {
 game.start();
