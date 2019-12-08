@@ -44,8 +44,18 @@ h1 {
     right: 10%;
 }
 
+.instructions {
+    text-align: center;
+    width: 20%;
+    position: absolute;
+    bottom: 5%;
+}
 
-
+ul {
+    font-size: 20px;
+    width:100%;
+    text-align: left; 
+}
 
 .game-board {
     display: flex;

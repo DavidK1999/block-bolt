@@ -5,7 +5,7 @@ const leftBound = 20;
 const topBound = 20;
 const rightBound = 360;
 const bottomBound = 360;
-const deadSpaceTrailDelay = 75;
+const deadSpaceTrailDelay = 50;
 const activeSpaceRestoreDelay = 1500;
 const winningScore = 5;
 
@@ -40,7 +40,7 @@ class Game {
         // Useful for getting bound information
         let $spaces = $gameBoard.children('.active-space');
         for(let i = 0; i < $spaces.length; i++) {
-            $spaceCooridnates.push($spaces.eq(i).offset());
+            $spaceCooridnates.push($spaces.eq(i).position());
         }
     }
 
@@ -116,12 +116,6 @@ class Game {
                 return $(this).position().top === top
                     && $(this).position().left === left;
             });
-            
-        // if(this.player1.playerSprite.siblings().hasClass('coin')) {
-        //     $('.coin').remove();
-        //     this.generateCoins();
-        //     return this.player1.score++;
-        // }
         
         // Animates the previous spaces black to denote a dead space. A delay is added to then allow the player to move to the next space 
         // before being polled for it's position more than once. After this, the previous space is then given the "dead-space" class
@@ -181,8 +175,8 @@ class Game {
 
     displayPlayerScore() {
         window.setInterval(() => {
-            $('.player-one-score').text(`Player 1: ${this.player1.score}`);
-            $('.player-two-score').text(`Player 2: ${this.player2.score}`);
+            $('.player-one-score').text(`Player 1 : ${this.player1.score}`);
+            $('.player-two-score').text(`Player 2 : ${this.player2.score}`);
         });
     }
 
@@ -226,22 +220,22 @@ class Player {
                 switch(e.which) {
                     case this.leftKeyCode:
                         if(this.getCurrentPosition().left >= leftBound) {
-                            this.playerSprite.animate({left: '-=20'}, 75);
+                            this.playerSprite.animate({left: '-=20'}, deadSpaceTrailDelay);
                         } 
                         break;
                     case this.upKeyCode:
                         if(this.getCurrentPosition().top >= topBound) {
-                            this.playerSprite.animate({top: '-=20'}, 75);
+                            this.playerSprite.animate({top: '-=20'}, deadSpaceTrailDelay);
                         } 
                         break;
                     case this.rightKeyCode:
                         if(this.getCurrentPosition().left <= rightBound) {
-                        this.playerSprite.animate({left: '+=20'}, 75);
+                        this.playerSprite.animate({left: '+=20'}, deadSpaceTrailDelay);
                         }
                         break;
                     case this.downKeyCode:
                         if(this.getCurrentPosition().top <= bottomBound) {
-                            this.playerSprite.animate({top: '+=20'}, 75);
+                            this.playerSprite.animate({top: '+=20'}, deadSpaceTrailDelay);
                         }
                         break;
                 }
