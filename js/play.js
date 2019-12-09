@@ -8,6 +8,7 @@ const bottomBound = 360;
 const deadSpaceTrailDelay = 50;
 const activeSpaceRestoreDelay = 1500;
 const respawnTime = 2000;
+let spawnLimits;
 let pointsOnBoard = [];
 
 class Game {
@@ -43,13 +44,13 @@ class Game {
         for(let i = 0; i < numberOfPoints; i++) {
             let point = $('<div>').addClass('point').attr('id', `point${i}`);
 
-            let spawnLimits = $gameBoard
+            spawnLimits = $gameBoard
             .find(".active-space")
             .filter(function() {
-                return $(this).position().top >= topBound
-                    && $(this).position().top <= bottomBound
-                    && $(this).position().left >= leftBound
-                    && $(this).position().left <= rightBound;
+                return $(this).position().top > topBound
+                    && $(this).position().top < bottomBound
+                    && $(this).position().left > leftBound
+                    && $(this).position().left < rightBound;
             });
             let randomNumber = Math.floor(Math.random() * spawnLimits.length + 1);
             spawnLimits.eq(randomNumber).append(point);
@@ -59,9 +60,9 @@ class Game {
     replacePoint(pointID) {
         // Gets the id of the point touched by player and replaces it somewhere else on the board
         $(`#${pointID}`).remove();
-        let randomNumber = Math.floor(Math.random() * $('.active-space').length + 1);
+        let randomNumber = Math.floor(Math.random() * (spawnLimits.length + 1));
         let point = $('<div>').addClass('point').attr('id', pointID);
-        setTimeout(() => {$('.active-space').eq(randomNumber).append(point)}, 10);
+        setTimeout(() => {spawnLimits.eq(randomNumber).append(point)}, 10);
     }
 
     getSpaceCoordinates() {
@@ -129,7 +130,7 @@ class Game {
         $('body').on('keyup', (e) => {
             if(e.which == 65 ||  e.which == 87 || e.which == 68 || e.which == 83) {
                 this.generatePlayer1Trail(this.player1.getCurrentPosition().top, this.player1.getCurrentPosition().left);
-            } else {
+            } else if(e.which === 37 || e.which ===  38 || e.which ===  39 || e.which ===  40) {
                 this.generatePlayer2Trail(this.player2.getCurrentPosition().top, this.player2.getCurrentPosition().left);
             }
         });
@@ -175,7 +176,6 @@ class Game {
             $player2PreviousSpace.addClass('dead-space');
             if($('.player-two').parent().hasClass('dead-space')) {
                 $('audio')[1].play();
-                console.log('Dead');
                 this.player2.playerSprite.remove();
                 setTimeout(() => {this.respawnPlayer2()}, respawnTime);
             }
@@ -246,7 +246,7 @@ class Game {
             $('.point').animate({backgroundColor: `rgb(${r}, ${g}, ${b})`});
         }, 1000);
     }
-
+    
     start() {
         game.createPlayers();
         game.createBoard(400);
@@ -254,7 +254,7 @@ class Game {
         game.getSpaceCoordinates();
         game.allowMovement();
         game.getPlayerPreviousPositions();
-        game.generatePoints(6);
+        game.generatePoints(5);
         game.displayPlayerScore();
         game.updateColors();
         game.checkForWin();
@@ -301,4 +301,5 @@ const game = new Game();
 $(() => {
     $('audio')[0].play();
     game.start();
+    console.log($spaceCooridnates);
 });
