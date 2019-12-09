@@ -1,12 +1,7 @@
-const $gameBoard = $('<div>').addClass('game-board');
-const $gameBoardEdge = $('<div>').addClass('game-board-edges');
-const $body = $('body');
-const $audio = $('audio');
+const gameBoard = document.createElement('div').classList.add('game-board');
+const gameBoardEdge = document.createElement('div').classList.add('game-board-edges');
+const body = document.getElementsByTagName('body')[0];
 const $spaceCooridnates = [];
-const $player1Score = $('.player-one-score');
-const $player2Score = $('.player-two-score');
-let $start = $('.start');
-let $point = $('.point');
 const leftBound = 20;
 const topBound = 20;
 const rightBound = 360;
@@ -33,30 +28,30 @@ class Game {
 
     createBoard(numberOfSpaces) {
         for(let i = 0; i < numberOfSpaces; i++) {
-            let $activeSpace = $('<div>').addClass('active-space').attr('id', i);
-            $gameBoard.append($activeSpace);
+            let activeSpace = document.createElement('div').classList.add('active-space');
+            gameBoard.append(activeSpace);
         }
         //Adds the visual "bound" to contain the players
-        $body.append($gameBoardEdge);
+        bpdy.append(gameBoardEdge);
         
-        $gameBoardEdge.append($gameBoard);
+        gameBoardEdge.append(gameBoard);
         
         // Creates starting spaces for players
-        $gameBoard.children('.active-space').eq(0).attr('class', 'start');
-        $gameBoard.children('.active-space').eq(numberOfSpaces - 2).attr('class', 'start');
+        gameBoard.children('.active-space')[0].setAttribute('class', 'start');
+        gameBoard.children('.active-space')[numberOfSpaces - 2].setAttribute('class', 'start');
     }
 
     generatePoints(numberOfPoints) {
         for(let i = 0; i < numberOfPoints; i++) {
-            let point = $('<div>').addClass('point').attr('id', `point${i}`);
+            let point = document.createElement('div').classList.add('point').setAttribute('id', i);
 
-            spawnLimits = $gameBoard
-            .find(".active-space")
+            spawnLimits = gameBoard
+            .childNodes(".active-space")
             .filter(function() {
-                return $(this).position().top > topBound
-                    && $(this).position().top < bottomBound
-                    && $(this).position().left > leftBound
-                    && $(this).position().left < rightBound;
+                return $(this).offsetTop > topBound
+                    && $(this).offsetTop( < bottomBound
+                    && $(this).offsetParent().left > leftBound
+                    && $(this).offsetParent().left < rightBound;
             });
             let randomNumber = Math.floor(Math.random() * spawnLimits.length + 1);
             spawnLimits.eq(randomNumber).append(point);
@@ -90,7 +85,7 @@ class Game {
     }
 
     getPlayerCurrentPositions() {
-        setInterval(() => {
+        return window.setInterval(() => {
             let top1 = this.player1.getCurrentPosition().top;
             let left1 = this.player1.getCurrentPosition().left;
             let top2 = this.player2.getCurrentPosition().top;
@@ -109,7 +104,7 @@ class Game {
 
     getPlayerPreviousPositions() {
         // Gets the player previous space as this information is updated when the player presses the key, not after they have been animated a direction
-        $body.on('keyup', (e) => {
+        $('body').on('keyup', (e) => {
             if(e.which == 65 || e.which == 87 || e.which == 68 || e.which == 83) {
                 this.generatePlayer1Trail(this.player1.getCurrentPosition().top, this.player1.getCurrentPosition().left);
             } else if(e.which === 37 || e.which ===  38 || e.which ===  39 || e.which ===  40) {
@@ -154,7 +149,7 @@ class Game {
 
     checkPlayerRemoval(player) {
         if(player.playerSprite.parent().hasClass('dead-space')) {
-            $audio[1].play();
+            $('audio')[1].play();
             player.playerSprite.remove();
             setTimeout(() => {player === this.player1 ? this.respawnPlayer1() : this.respawnPlayer2()}, respawnTime);
         }
@@ -177,8 +172,8 @@ class Game {
     }
 
     checkPointCollision(player1, player2) {
-        if(player1.siblings().hasClass('point')) {
-            $audio[2].play();
+        if($('.player').siblings().hasClass('point')) {
+            $('audio')[2].play();
         };
 
         if(player1.siblings().hasClass('point')) {
@@ -196,8 +191,8 @@ class Game {
 
     displayPlayerScore() {
         window.setInterval(() => {
-            $player1Score.text(`Player 1 : ${this.player1Score}`);
-            $player2Score.text(`Player 2 : ${this.player2Score}`);
+            $('.player-one-score').text(`Player 1 : ${this.player1Score}`);
+            $('.player-two-score').text(`Player 2 : ${this.player2Score}`);
         });
     }
 
@@ -222,13 +217,13 @@ class Game {
             $gameBoardEdge.animate({backgroundColor: `rgb(${r}, ${g}, ${b})`});
             $('.start').animate({backgroundColor: `rgb(${r}, ${g}, ${b})`});
             $('.point').animate({backgroundColor: `rgb(${r}, ${g}, ${b})`});
-        }, 2000);
+        }, 1000);
     }
     
     start() {
         game.createPlayers();
         game.createBoard(400);
-        game.addPlayersToBoard();
+        this.addPlayersToBoard();
         game.getSpaceCoordinates();
         game.allowMovement();
         game.getPlayerPreviousPositions();
@@ -251,7 +246,7 @@ class Player {
     }
 
     move() {
-        $body.on('keyup', (e) => {
+        $('body').on('keyup', (e) => {
             switch(e.which) {
                 case this.leftKeyCode:
                     if(this.getCurrentPosition().left >= leftBound) this.playerSprite.animate({left: '-=20'}, deadSpaceTrailDelay);
@@ -274,7 +269,5 @@ class Player {
     }
 }
 const game = new Game();
-$(() => {
-    $audio[0].play();
+    $('audio')[0].play();
     game.start();
-});
