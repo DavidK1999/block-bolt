@@ -11,7 +11,7 @@ const leftBound = 20;
 const topBound = 20;
 const rightBound = 360;
 const bottomBound = 360;
-const deadSpaceTrailDelay = 50;
+const deadSpaceTrailDelay = 10;
 const activeSpaceRestoreDelay = 1500;
 const respawnTime = 2000;
 let spawnLimits;
