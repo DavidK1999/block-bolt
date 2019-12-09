@@ -8,7 +8,6 @@ const bottomBound = 360;
 const deadSpaceTrailDelay = 50;
 const activeSpaceRestoreDelay = 1500;
 const respawnTime = 2000;
-const winningScore = 5;
 let pointsOnBoard = [];
 
 class Game {
@@ -17,6 +16,7 @@ class Game {
         this.player2;
         this.player1Score = 0;
         this.player2Score = 0;
+        this.winScore = 10;
     }
 
     createPlayers() {
@@ -206,12 +206,14 @@ class Game {
 
         if(player1.siblings().hasClass('point')) {
             this.replacePoint(player1.siblings().attr('id'));
-            return this.player1Score++;
+            this.player1Score++;
+            this.checkForWin();
         }
         
         if(player2.siblings().hasClass('point')) {
             this.replacePoint(player2.siblings().attr('id'));
-            return this.player2Score++;
+            this.player2Score++;
+            this.checkForWin();
         }
     }
 
@@ -222,6 +224,18 @@ class Game {
         });
     }
 
+    checkForWin() {
+        setTimeout(() => {
+            if(this.player1Score === this.winScore) {
+                alert('Player 1 Wins');
+                location.reload();
+            }
+            if(this.player2Score === this.winScore) {
+                alert('Player 2 Wins');
+                location.reload();
+            }
+        }, 500);
+    }
     updateColors() {
         window.setInterval(() => {
             let r = Math.floor(Math.random() * 256);
@@ -233,10 +247,6 @@ class Game {
         }, 1000);
     }
 
-    checkForWin() {
-        if(this.player1.score === winningScore) alert('Player 1 Wins');
-        if(this.player2.score === winningScore) alert('Player 2 Wins');
-    }
     start() {
         game.createPlayers();
         game.createBoard(400);
@@ -244,7 +254,7 @@ class Game {
         game.getSpaceCoordinates();
         game.allowMovement();
         game.getPlayerPreviousPositions();
-        game.generatePoints(4);
+        game.generatePoints(6);
         game.displayPlayerScore();
         game.updateColors();
         game.checkForWin();

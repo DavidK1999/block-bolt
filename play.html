@@ -6,9 +6,9 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="css/play.css">
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
-    <audio src="assets/fight.ogg" volume ="0.1" loop autoplay></audio>
-    <audio src="assets/echosplosion.wav"></audio>
-    <audio src="assets/collect5.wav"></audio>
+    <audio id="background-music"src="assets/fight.ogg" volume ="0.1" loop autoplay></audio>
+    <audio id="player-death"src="assets/echosplosion.wav"></audio>
+    <audio id="pickup"src="assets/collect5.wav"></audio>
     <title>Playground</title>
 </head>
 <body class="first-body">
@@ -17,13 +17,12 @@
 
     <div class="controls">
         <h3 class="player1">Player 1 Controls</h3>
-        <p>WASD</p>
+        <p>Tap WASD</p>
         <h3 class="player2">Player 2 Controls</h3>
-        <p>Arrow Keys</p>
+        <p>Tap Arrow Keys</p>
     </div>
 
     <div class="score-board">
-        <h2>Score</h2>
         <h4 class="player-one-score">Player 1:</h4>
         <h4 class="player-two-score">Player 2:</h4>
     </div>
@@ -31,11 +30,9 @@
 
     <div class="instructions">
         <h2>Instructions</h2>
-        <ul>
-            <li>First player to 10 points wins</li>
-            <li>Bumping into the other player's trail will kill you</li>
-            <li>Bumping into the wall will kill you</li>
-        </ul>
+        <h3>First player to 10 points wins</h3>
+        <h3>Bumping into the other player's trail will kill you</h3>
+        <h3>Bumping into the wall will kill you</h3>
     </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>

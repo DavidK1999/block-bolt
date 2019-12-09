@@ -41,35 +41,36 @@ h1 {
 .score-board {
     font-size: 30px;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    flex-direction: row;
+    justify-content: space-around;
     align-items: center;
-    height: 80%;
-    width: 20%;
+    height: 10%;
+    width: 30%;
     position: absolute;
-    right: 10%;
+    bottom: 10%;
+    border: 5px solid white;
+    border-radius: 8px;
 }
 
 .instructions {
-    font-size: 30px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     width: 20%;
     position: absolute;
-    bottom: 4%;
+    right: 10%;
+    height: 30%;
 }
-
 .instructions h2 {
+    font-size: 40px;
     margin: 0;
 }
 
-ul {
-    list-style: none;
-    font-size: 20px;
-    width:100%;
-    margin-bottom: 5%;
+.instructions h3 {
+    width: 100%;
+    font-size: 22px;
+    text-align: center;
 }
 
 .game-board {
@@ -86,7 +87,7 @@ ul {
     align-items: center;
     width: 450px;
     height: 450px;
-    background-color: violet;
+    background-color: black;
 }
 
 .active-space {
