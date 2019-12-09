@@ -128,7 +128,7 @@ class Game {
     getPlayerPreviousPositions() {
         // Gets the player previous space as this information is updated when the player presses the key, not after they have been animated a direction
         $('body').on('keyup', (e) => {
-            if(e.which == 65 ||  e.which == 87 || e.which == 68 || e.which == 83) {
+            if(e.which == 65 || e.which == 87 || e.which == 68 || e.which == 83) {
                 this.generatePlayer1Trail(this.player1.getCurrentPosition().top, this.player1.getCurrentPosition().left);
             } else if(e.which === 37 || e.which ===  38 || e.which ===  39 || e.which ===  40) {
                 this.generatePlayer2Trail(this.player2.getCurrentPosition().top, this.player2.getCurrentPosition().left);
