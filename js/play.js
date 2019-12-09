@@ -68,16 +68,12 @@ class Game {
     getSpaceCoordinates() {
         // Useful for getting bound information
         let $spaces = $gameBoard.children('.active-space');
-        for(let i = 0; i < $spaces.length; i++) {
-            $spaceCooridnates.push($spaces.eq(i).position());
-        }
+        for(let i = 0; i < $spaces.length; i++) { $spaceCooridnates.push($spaces.eq(i).position());}
     }
 
     addPlayersToBoard() {
-        console.log(this.player1);
         $('.start').eq(0).append(this.player1.playerSprite);
         $('.start').eq(1).append(this.player2.playerSprite);
-        
         //Gets Player Current Positions after they have been added to the board
         this.getPlayerCurrentPositions();
     }
