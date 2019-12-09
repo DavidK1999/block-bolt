@@ -89,40 +89,20 @@ class Game {
 
     getPlayerCurrentPositions() {
         return window.setInterval(() => {
-            //Player One Current Positions
             let top1 = this.player1.getCurrentPosition().top;
             let left1 = this.player1.getCurrentPosition().left;
-            //Player Two Current Positions
             let top2 = this.player2.getCurrentPosition().top;
             let left2 = this.player2.getCurrentPosition().left;
-            
             this.appendPlayerBasedOnCurrentPosition(top1, left1, top2, left2)
         });
     }
 
     appendPlayerBasedOnCurrentPosition(top1, left1, top2, left2) {
-        // Filters for the space that matches the players current position after they have been animated a direction
-        let $player1CurrentSpace = $gameBoard
-            .find('.active-space')
-            .filter(function() {
-                return $(this).position().top === top1
-                    && $(this).position().left === left1;
-            });
-            // Appends the player to that space 
-
-            this.player1.playerSprite.appendTo($player1CurrentSpace);
-            
-
-        let $player2CurrentSpace = $gameBoard
-            .find('.active-space')
-            .filter(function() {
-            return $(this).position().top === top2
-                && $(this).position().left === left2;
-            });
-
-            this.player2.playerSprite.appendTo($player2CurrentSpace);
-            
-            this.checkPointCollision(this.player1.playerSprite, this.player2.playerSprite);
+        let $player1CurrentSpace = this.filteredSpace('.active-space', top1, left1);
+        this.player1.playerSprite.appendTo($player1CurrentSpace);
+        let $player2CurrentSpace = this.filteredSpace('.active-space', top2, left2);
+        this.player2.playerSprite.appendTo($player2CurrentSpace);
+        this.checkPointCollision(this.player1.playerSprite, this.player2.playerSprite);
     }
 
     getPlayerPreviousPositions() {
@@ -137,50 +117,15 @@ class Game {
     }
     
     generatePlayer1Trail(top, left) {
-        // Filters for spaces that are not yet "dead spaces" and that are based on the players previous positions
-        let $player1PreviousSpace = $gameBoard
-            .find(".active-space")
-            .filter(function() {
-                return $(this).position().top === top
-                    && $(this).position().left === left;
-            });
-
-        // Animates the previous spaces black to denote a dead space. A delay is added to then allow the player to move to the next space 
-        // before being polled for it's position more than once. After this, the previous space is then given the "dead-space" class
-        // Animation and class delay is the same to let the player know when it is safe to move back onto a space
-        
-        $player1PreviousSpace.animate({backgroundColor: `white`}, deadSpaceTrailDelay, "linear");
-        setTimeout(() => {
-            $player1PreviousSpace.addClass('dead-space');
-            if($('.player-one').parent().hasClass('dead-space')) {
-                $('audio')[1].play();
-                this.player1.playerSprite.remove();
-                setTimeout(() => {this.respawnPlayer1()}, respawnTime);
-            }
-        }, deadSpaceTrailDelay);
-        $player1PreviousSpace.animate({backgroundColor: 'black'}, activeSpaceRestoreDelay, "linear", () => $player1PreviousSpace.removeClass('dead-space'));
+        let $player1PreviousSpace = this.filteredSpace('.active-space', top, left);
+        this.animateTrail(this.player1, $player1PreviousSpace, 'white', deadSpaceTrailDelay, 'linear', 'dead-space');
+        this.restoreTrail($player1PreviousSpace, 'black', activeSpaceRestoreDelay, 'linear', 'dead-space');
     }
     
     generatePlayer2Trail(top, left) {
-        console.log(top);
-        console.log(left);
-        let $player2PreviousSpace = $gameBoard
-            .find(".active-space")
-            .filter(function() {
-                return $(this).position().top === top
-                    && $(this).position().left === left;
-            });
-
-    $player2PreviousSpace.animate({backgroundColor: `white`}, deadSpaceTrailDelay, "linear");
-        setTimeout(() => {
-            $player2PreviousSpace.addClass('dead-space');
-            if($('.player-two').parent().hasClass('dead-space')) {
-                $('audio')[1].play();
-                this.player2.playerSprite.remove();
-                setTimeout(() => {this.respawnPlayer2()}, respawnTime);
-            }
-        }, deadSpaceTrailDelay);
-        $player2PreviousSpace.animate({backgroundColor: 'black'}, activeSpaceRestoreDelay, "linear", () => $player2PreviousSpace.removeClass('dead-space'));
+        let $player2PreviousSpace = this.filteredSpace('.active-space', top, left);
+        this.animateTrail(this.player2, $player2PreviousSpace, 'white', deadSpaceTrailDelay, 'linear', 'dead-space');
+        this.restoreTrail($player2PreviousSpace, 'black', activeSpaceRestoreDelay, 'linear', 'dead-space');
     }
 
     respawnPlayer1() {
@@ -198,11 +143,41 @@ class Game {
         this.player2.move();
     }
 
+    animateTrail(player, trailingSpace, trailColor, delay, easing, trailingSpaceClass) {
+        trailingSpace.animate({backgroundColor: trailColor}, delay ,easing);
+        setTimeout(() => {
+            trailingSpace.addClass(trailingSpaceClass) ;
+            this.checkPlayerRemoval(player)}, delay);
+    }
+
+    checkPlayerRemoval(player) {
+        if(player.playerSprite.parent().hasClass('dead-space')) {
+            $('audio')[1].play();
+            player.playerSprite.remove();
+            setTimeout(() => {player === this.player1 ? this.respawnPlayer1() : this.respawnPlayer2()}, respawnTime);
+        }
+    }
+    
+    restoreTrail(trailingSpace, trailColor, delay, easing, trailingSpaceClass) {
+        trailingSpace.animate({backgroundColor: trailColor}, delay ,easing);
+        setTimeout(() => {trailingSpace.removeClass(trailingSpaceClass)}, delay);
+    }
+
+    filteredSpace(spacesToBeFiltered, top, left) {
+        let filteredSpace = $gameBoard
+            .find(`${spacesToBeFiltered}`)
+            .filter(function() {
+                return $(this).position().top === top
+                    && $(this).position().left === left;
+            });
+
+            return filteredSpace;
+    }
+
     checkPointCollision(player1, player2) {
         if($('.player').siblings().hasClass('point')) {
             $('audio')[2].play();
         };
-
 
         if(player1.siblings().hasClass('point')) {
             this.replacePoint(player1.siblings().attr('id'));
@@ -236,6 +211,7 @@ class Game {
             }
         }, 500);
     }
+    
     updateColors() {
         window.setInterval(() => {
             let r = Math.floor(Math.random() * 256);
@@ -295,11 +271,8 @@ class Player {
         return this.playerSprite.position();
     }
 }
-// const player1 = new Player('player-one', [65, 87, 68, 83], 1);
-// const player2 = new Player('player-two', [37, 38, 39, 40], 2);
 const game = new Game();
 $(() => {
     $('audio')[0].play();
     game.start();
-    console.log($spaceCooridnates);
 });
