@@ -11,11 +11,12 @@ const leftBound = 20;
 const topBound = 20;
 const rightBound = 360;
 const bottomBound = 360;
-const deadSpaceTrailDelay = 10;
+const deadSpaceTrailDelay = 100;
 const activeSpaceRestoreDelay = 1500;
 const respawnTime = 2000;
 let spawnLimits;
 let pointsOnBoard = [];
+
 
 class Game {
     constructor() {
@@ -236,7 +237,7 @@ class Game {
         game.displayPlayerScore();
         game.updateColors();
         game.checkForWin();
-    };
+    }
 }
 
 class Player {
@@ -268,7 +269,7 @@ class Player {
             }
         });
     }
-
+    
     getCurrentPosition() {
         return this.playerSprite.position();
     }
