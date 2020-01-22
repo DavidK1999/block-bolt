@@ -255,16 +255,16 @@ class Player {
         $body.on('keyup', (e) => {
             switch(e.which) {
                 case this.leftKeyCode:
-                    if(this.getCurrentPosition().left >= leftBound) this.playerSprite.animate({left: '-=20'}, deadSpaceTrailDelay);
+                    if(this.getCurrentPosition().left >= leftBound) this.playerSprite.animate({left: '-=20'}, 1);
                     break;
                 case this.upKeyCode:
-                    if(this.getCurrentPosition().top >= topBound) this.playerSprite.animate({top: '-=20'}, deadSpaceTrailDelay);
+                    if(this.getCurrentPosition().top >= topBound) this.playerSprite.animate({top: '-=20'}, 1);
                     break;
                 case this.rightKeyCode:
-                    if(this.getCurrentPosition().left <= rightBound) this.playerSprite.animate({left: '+=20'}, deadSpaceTrailDelay);
+                    if(this.getCurrentPosition().left <= rightBound) this.playerSprite.animate({left: '+=20'}, 1);
                     break;
                 case this.downKeyCode:
-                    if(this.getCurrentPosition().top <= bottomBound) this.playerSprite.animate({top: '+=20'}, deadSpaceTrailDelay);
+                    if(this.getCurrentPosition().top <= bottomBound) this.playerSprite.animate({top: '+=20'}, 1);
                     break;
             }
         });
